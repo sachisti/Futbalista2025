@@ -1,23 +1,33 @@
+#ifndef __FUTBALISTA_H__
+#define __FUTBALISTA_H__
+
 #include <inttypes.h>
 
 #define YELLOW 1
 #define BLUE 2
 
 extern int opponent_color;
+extern int sirka;
+extern int vyska;
+
+typedef struct veci_str {
+   int sirka_lopty, vyska_lopty, velkost_lopty, riadok_lopty, stlpec_lopty;
+   int sirka_zltej_branky, vyska_zltej_branky, velkost_zltej_branky, riadok_zltej_branky, stlpec_zltej_branky;
+   int sirka_modrej_branky, vyska_modrej_branky, velkost_modrej_branky, riadok_modrej_branky, stlpec_modrej_branky;
+} hladane_veci;
+
+extern hladane_veci veci;
+extern int mam_veci;
 
 // komunikacia 
 
-int setup_komunikacia();
+void setup_komunikacia();
 void zapis_paket_do_arduina(uint8_t *zapisovany_paket); 
 void ukonci_komunikaciu();
 
 // kamera
 
-int setup_kamera();
-void ukonci_kameru();
-void najdi_veci(int *sirka_lopty, int *vyska_lopty, int *velkost_lopty, int *riadok_lopty, int *stlpec_lopty,
-               int *sirka_zltej_branky, int *vyska_zltej_branky, int *velkost_zltej_branky, int *riadok_zltej_branky, int *stlpec_zltej_branky,
-               int *sirka_modrej_branky, int *vyska_modrej_branky, int *velkost_modrej_branky, int *riadok_modrej_branky, int *stlpec_modrej_branky);
+void najdi_veci_v_obraze(uint8_t *RGB);
 void test_kamery();
 
 
@@ -26,3 +36,4 @@ void setup_log();
 void zaloguj(char *sprava);
 void zaloguj_n(char *sprava, int cislo);
 
+#endif

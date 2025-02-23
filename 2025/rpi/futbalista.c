@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "futbalista.h"
+#include "camera_module.h"
 
 uint8_t headless = 0;
 int opponent_color = YELLOW;
@@ -36,27 +37,27 @@ void navod()
 void posli_lopta_vpravo()
 {
     char *s = "21";    
-    zapis_paket_do_arduina(s);
+    zapis_paket_do_arduina((uint8_t *)s);
 
 }
 
 void posli_lopta_vlavo()
 {
     char *s = "22";    
-    zapis_paket_do_arduina(s);
+    zapis_paket_do_arduina((uint8_t *)s);
 
 }
 
 void posli_lopta_vstrede()
 {
     char *s = "23";    
-    zapis_paket_do_arduina(s);
+    zapis_paket_do_arduina((uint8_t *)s);
 }
 
 void posli_nevidi_loptu()
 {
     char *s = "24";    
-    zapis_paket_do_arduina(s);
+    zapis_paket_do_arduina((uint8_t *)s);
 }
 
 
@@ -66,40 +67,34 @@ int hra()
     zaloguj("futbalista bezi v headless rezime");
     
     do {
-        int sirka_lopty, vyska_lopty, velkost_lopty, riadok_lopty, stlpec_lopty;
-	int sirka_zltej_branky, vyska_zltej_branky, velkost_zltej_branky, riadok_zltej_branky, stlpec_zltej_branky;
-	int sirka_modrej_branky, vyska_modrej_branky, velkost_modrej_branky, riadok_modrej_branky, stlpec_modrej_branky;
-	
-	najdi_veci(&sirka_lopty, &vyska_lopty, &velkost_lopty, &riadok_lopty, &stlpec_lopty,
-               &sirka_zltej_branky, &vyska_zltej_branky, &velkost_zltej_branky, &riadok_zltej_branky, &stlpec_zltej_branky,
-               &sirka_modrej_branky, &vyska_modrej_branky, &velkost_modrej_branky, &riadok_modrej_branky, &stlpec_modrej_branky);
-	
-	int je_pred_nami_nasa_branka = 0;
-	if ((opponent_color == BLUE) && (velkost_zltej_branky > 50))
-	   je_pred_nami_nasa_branka =1;
-	if ((opponent_color == YELLOW) && (velkost_modrej_branky > 50))
-	   je_pred_nami_nasa_branka =1;
+
+	    int je_pred_nami_nasa_branka = 0;
+	    if ((opponent_color == BLUE) && (veci.velkost_zltej_branky > 50))
+	        je_pred_nami_nasa_branka =1;
+	     if ((opponent_color == YELLOW) && (veci.velkost_modrej_branky > 50))
+	        je_pred_nami_nasa_branka =1;
 	   
-	if (!stlpec_lopty) posli_nevidi_loptu();
-	if (velkost_lopty < 10) continue;
-	if (stlpec_lopty < 320 / 3) posli_lopta_vpravo();
-	else if (stlpec_lopty < 2 * 320 / 3)
-	{
-	    if (je_pred_nami_nasa_branka) posli_nevidi_loptu();
-	    else posli_lopta_vstrede();
-	} else posli_lopta_vlavo();
+	     if (!veci.stlpec_lopty) posli_nevidi_loptu();
+         else if (veci.velkost_lopty < 10) continue;
+         else if (veci.stlpec_lopty < sirka / 3) posli_lopta_vpravo();
+	     else if (veci.stlpec_lopty < 2 * sirka / 3)
+	     {
+	        if (je_pred_nami_nasa_branka) posli_nevidi_loptu();
+	        else posli_lopta_vstrede();
+	     } else posli_lopta_vlavo();
 	
-	iter++;
-	if (iter % 100 == 0)
-	  zaloguj_n("hra() iter", iter);
+	     iter++;
+	     if (iter % 100 == 0)
+	         zaloguj_n("hra() iter", iter);
+
     } while (1);
     
     return 0;
 }
 
-int hlavny_program()
+void hlavny_program()
 {
-    if (headless) return hra();
+    if (headless) hra();
     
     zaloguj("futbalista bezi v interaktivnom rezime");
     char sprava[100];
@@ -107,15 +102,15 @@ int hlavny_program()
     printf("0 = navod\n");
 
     do {
-        printf("presov> ");
+        printf("filomena> ");
         fgets(sprava, 5, stdin);
         sscanf(sprava, "%d", &a);
         if (a == 0) navod();
-	else if (a == 9) test_kamery();
+	    else if (a == 9) test_kamery();
         else
         {
             sprintf(sprava, "%d", a);
-            zapis_paket_do_arduina(sprava);
+            zapis_paket_do_arduina((uint8_t *)sprava);
         }
     } while (a != 100);
 }
@@ -145,11 +140,10 @@ int main(int argc, char **argv)
     load_color();
     setup_log();
     setup_komunikacia();
-    setup_kamera();
+    setup_camera_callback(najdi_veci_v_obraze);
 
     hlavny_program();
 
-    ukonci_kameru();
     ukonci_komunikaciu();
     return 0;
 }

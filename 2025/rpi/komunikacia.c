@@ -93,7 +93,7 @@ void precitaj_paket_z_arduina()
     unsigned char ch;
     int precital;
 
-    if (arduino_inicializovane == 0) zapis_paket_do_arduina("45");
+    if (arduino_inicializovane == 0) zapis_paket_do_arduina((uint8_t *)"45");
     do
     {
   
@@ -182,7 +182,7 @@ void zapis_paket_do_arduina(uint8_t *zapisovany_paket)
       exit(-1);
     }
 
-    int dlzka_paketu = strlen(zapisovany_paket);
+    int dlzka_paketu = strlen((char *)zapisovany_paket);
     zapisal = write(fdZapis[1], zapisovany_paket, dlzka_paketu);
     if (zapisal < dlzka_paketu)
     {
@@ -197,7 +197,7 @@ void zapis_paket_do_arduina(uint8_t *zapisovany_paket)
     }
 }
 
-int setup_komunikacia()
+void setup_komunikacia()
 {
     pthread_t t;
     pocet_beziacich_vlakien = 0;

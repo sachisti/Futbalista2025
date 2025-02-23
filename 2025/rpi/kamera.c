@@ -1,7 +1,6 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <time.h>
-#include <linux/videodev2.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,16 +9,14 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <unistd.h>
+#include <sys/time.h>
+
 #include "pngwriter.h"
+#include "camera_module.h"
+#include "futbalista.h"
 
 
 #define VYSKA_OBRAZU 1       //bolo to 2/3, skusime dat cely obraz
-
-
-//odkomentujte nasledovny riadok ak kamera nepodporuje BGR format
-//pozri v4l2-ctl -d /dev/videoX --list-formats
-
-//#define POUZI_YUV
 
 
 // veci co sa hladaju:
@@ -28,88 +25,16 @@
 #define VEC_ZLTA_BRANKA   1
 #define VEC_MODRA_BRANKA  2
 
+int sirka = 1920;
+int vyska = 1080;
 
 uint8_t *buffer;
 
-int sirka = 320;
-int vyska = 240;
+hladane_veci veci;
+int mam_veci = 0;
  
-long long usec()
-{
-  struct timeval tv;
-  gettimeofday(&tv, 0);
-  return (1000000L * (long long)tv.tv_sec) + tv.tv_usec;
-}
-
-static int xioctl(int fd, int request, void *arg)
-{
-        int r;
- 
-        do r = ioctl (fd, request, arg);
-        while (-1 == r && EINTR == errno);
- 
-        return r;
-}
- 
-int setup_format(int fd)
-{
-        struct v4l2_format fmt = {0};
-        fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-        fmt.fmt.pix.width = sirka;
-        fmt.fmt.pix.height = vyska;
-        
-        // ak vasa kamera nepodporuje BGR24, m ozno podporuje YUV420,
-        // ale v tom pripade bude treba obrazok spracovavat v tom
-        // formate, alebo si ho skonvertovat...
-
-#ifdef POUZI_YUV
-        fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUV420;
-#else
-        fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_BGR24;
-#endif
-
-        fmt.fmt.pix.field = V4L2_FIELD_NONE;
-        
-        if (-1 == xioctl(fd, VIDIOC_S_FMT, &fmt))
-        {
-            perror("nepodarilo sa nastavit format");
-            return 1;
-        }
-
-        return 0;
-}
- 
-int init_mmap(int fd)
-{
-    struct v4l2_requestbuffers req = {0};
-    req.count = 1;
-    req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    req.memory = V4L2_MEMORY_MMAP;
- 
-    if (-1 == xioctl(fd, VIDIOC_REQBUFS, &req))
-    {
-        perror("nepodarilo sa inicializovat mmap buffer");
-        return 1;
-    }
- 
-    struct v4l2_buffer buf = {0};
-    buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    buf.memory = V4L2_MEMORY_MMAP;
-    buf.index = 0;
-    if(-1 == xioctl(fd, VIDIOC_QUERYBUF, &buf))
-    {
-        perror("nepodarilo sa ziskat mmap buffer");
-        return 1;
-    }
- 
-    buffer = mmap (NULL, buf.length, PROT_READ | PROT_WRITE, MAP_SHARED, fd, buf.m.offset);
- 
-    return 0;
-}
-
 int je_vec (uint8_t r, uint8_t g, uint8_t b, int vec)
 {
-
   float h, s, v, max, min;
   h = 0;
  
@@ -192,22 +117,14 @@ int je_vec (uint8_t r, uint8_t g, uint8_t b, int vec)
   return 0;
 }
 
-
-int minr, mins, maxr, maxs;
-
-
 void zisti_rgb(int riadok, int stlpec, uint8_t *r, uint8_t *g, uint8_t *b)
 {
-#ifdef POUZI_YUV
-  	      *r = buffer[riadok * sirka * 3 + stlpec * 3];
-  	      *g = buffer[riadok * sirka * 3 + stlpec * 3 + 1];
-  	      *b = buffer[riadok * sirka * 3 + stlpec * 3 + 2];
-#else
   	      *b = buffer[riadok * sirka * 3 + stlpec * 3];
   	      *g = buffer[riadok * sirka * 3 + stlpec * 3 + 1];
   	      *r = buffer[riadok * sirka * 3 + stlpec * 3 + 2];
-#endif
 }
+
+int minr, mins, maxr, maxs;
 
 int fill(int riadok, int stlpec, int vec)
 {
@@ -245,69 +162,15 @@ int fill(int riadok, int stlpec, int vec)
 
   return kolko;
 }
- 
-struct v4l2_buffer buf = {0};
-uint8_t *rgb; 
-int kamera_fd;
 
-int init_sledovanie()
+//camera callback
+void najdi_veci_v_obraze(uint8_t *RGB)
 {
-    buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    buf.memory = V4L2_MEMORY_MMAP;
-    buf.index = 0;
-    
-#ifdef POUZI_YUV
-    *rgb = (uint8_t *)malloc(sirka * vyska * 3);
-#endif
-
-    if(-1 == xioctl(kamera_fd, VIDIOC_STREAMON, &buf.type))
-    {
-        perror("nepodarilo sa zapnut snimanie obrazu");
-        return 1;
-    }
-}
- 
-void najdi_veci(int *sirka_lopty, int *vyska_lopty, int *velkost_lopty, int *riadok_lopty, int *stlpec_lopty,
-               int *sirka_zltej_branky, int *vyska_zltej_branky, int *velkost_zltej_branky, int *riadok_zltej_branky, int *stlpec_zltej_branky,
-               int *sirka_modrej_branky, int *vyska_modrej_branky, int *velkost_modrej_branky, int *riadok_modrej_branky, int *stlpec_modrej_branky)
-
-{
-      if(-1 == xioctl(kamera_fd, VIDIOC_QBUF, &buf))
-      {
-        perror("nepodarilo sa poziadat o buffer");
-        return;
-      }
-      
-      fd_set fds;
-      FD_ZERO(&fds);
-      FD_SET(kamera_fd, &fds);
-      struct timeval tv = {0};
-      tv.tv_sec = 2;
-      int rv = select(kamera_fd+1, &fds, NULL, NULL, &tv);
-      if(-1 == rv)
-      {
-          perror("pocas cakania na obrazok doslo k chybe");
-          return;
-      }
-  
-      if(-1 == xioctl(kamera_fd, VIDIOC_DQBUF, &buf))
-      {
-          perror("nepodarilo sa ziskat obrazok");
-          return;
-      }
-
-#ifdef POUZI_YUV
-      yuv422_to_rgb((uint8_t *)buffer, rgb, sirka, vyska);
-      uint8_t *p = rgb;
-#else
+      buffer = RGB;
       uint8_t *p = (uint8_t *)buffer;
-#endif
-      double xs = 0;
-      double ys = 0;
-      int cnt = 0;
+
       // prechadzame cely obrazok bod po bode...
       // na tomto mieste chcete program upravit podla svojich potrieb...
-
 
       // najskor vynulujeme vsetky 4 okraje, aby fill nevybehol mimo rozsah pola
       for (int i = 0; i < vyska; i++)
@@ -346,15 +209,10 @@ void najdi_veci(int *sirka_lopty, int *vyska_lopty, int *velkost_lopty, int *ria
       for (int i = 0; i < vyska * VYSKA_OBRAZU; i++)
         for (int j = 0; j < sirka; j++)
         {
-#ifdef POUZI_YUV
-  	      uint8_t r = *(p++);
-  	      uint8_t g = *(p++);
-  	      uint8_t b = *(p++);
-#else
   	      uint8_t b = *(p++);
   	      uint8_t g = *(p++);
   	      uint8_t r = *(p++);
-#endif
+
   	      if (je_vec(r, g, b, VEC_LOPTA))
   	      {
                   mins = sirka, minr = vyska, maxs = -1, maxr = -1;
@@ -398,26 +256,27 @@ void najdi_veci(int *sirka_lopty, int *vyska_lopty, int *velkost_lopty, int *ria
       //printf("velkost: %d, sirka: %d, vyska: %d\n", doteraz_najvacsi, 
       //         doteraz_najv_sirka, doteraz_najv_vyska);
 
-      *sirka_lopty = doteraz_najv_sirka[VEC_LOPTA];
-      *vyska_lopty = doteraz_najv_vyska[VEC_LOPTA];
-      *velkost_lopty = doteraz_najvacsi[VEC_LOPTA];
-      *riadok_lopty = doteraz_najv_riadok[VEC_LOPTA];
-      *stlpec_lopty = doteraz_najv_stlpec[VEC_LOPTA];
+      veci.sirka_lopty = doteraz_najv_sirka[VEC_LOPTA];
+      veci.vyska_lopty = doteraz_najv_vyska[VEC_LOPTA];
+      veci.velkost_lopty = doteraz_najvacsi[VEC_LOPTA];
+      veci.riadok_lopty = doteraz_najv_riadok[VEC_LOPTA];
+      veci.stlpec_lopty = doteraz_najv_stlpec[VEC_LOPTA];
 
-      *sirka_zltej_branky = doteraz_najv_sirka[VEC_ZLTA_BRANKA];
-      *vyska_zltej_branky = doteraz_najv_vyska[VEC_ZLTA_BRANKA];
-      *velkost_zltej_branky = doteraz_najvacsi[VEC_ZLTA_BRANKA];
-      *riadok_zltej_branky = doteraz_najv_riadok[VEC_ZLTA_BRANKA];
-      *stlpec_zltej_branky = doteraz_najv_stlpec[VEC_ZLTA_BRANKA];
+      veci.sirka_zltej_branky = doteraz_najv_sirka[VEC_ZLTA_BRANKA];
+      veci.vyska_zltej_branky = doteraz_najv_vyska[VEC_ZLTA_BRANKA];
+      veci.velkost_zltej_branky = doteraz_najvacsi[VEC_ZLTA_BRANKA];
+      veci.riadok_zltej_branky = doteraz_najv_riadok[VEC_ZLTA_BRANKA];
+      veci.stlpec_zltej_branky = doteraz_najv_stlpec[VEC_ZLTA_BRANKA];
 
-      *sirka_modrej_branky = doteraz_najv_sirka[VEC_MODRA_BRANKA];
-      *vyska_modrej_branky = doteraz_najv_vyska[VEC_MODRA_BRANKA];
-      *velkost_modrej_branky = doteraz_najvacsi[VEC_MODRA_BRANKA];
-      *riadok_modrej_branky = doteraz_najv_riadok[VEC_MODRA_BRANKA];
-      *stlpec_modrej_branky = doteraz_najv_stlpec[VEC_MODRA_BRANKA];
-
+      veci.sirka_modrej_branky = doteraz_najv_sirka[VEC_MODRA_BRANKA];
+      veci.vyska_modrej_branky = doteraz_najv_vyska[VEC_MODRA_BRANKA];
+      veci.velkost_modrej_branky = doteraz_najvacsi[VEC_MODRA_BRANKA];
+      veci.riadok_modrej_branky = doteraz_najv_riadok[VEC_MODRA_BRANKA];
+      veci.stlpec_modrej_branky = doteraz_najv_stlpec[VEC_MODRA_BRANKA];
       
-      static int iter = 0;
+      mam_veci = 1;
+
+      //static int iter = 0;
       
       //if (iter++ == 1)
       //~ {
@@ -434,44 +293,20 @@ void najdi_veci(int *sirka_lopty, int *vyska_lopty, int *velkost_lopty, int *ria
       //~ }
 }
 
+long long usec()
+{
+  struct timeval tv;
+  gettimeofday(&tv, 0);
+  return (1000000L * (long long)tv.tv_sec) + tv.tv_usec;
+}
+
 void test_kamery()
 {
-   int sirka_lopty, vyska_lopty, velkost_lopty, riadok_lopty, stlpec_lopty;
-   int sirka_zltej_branky, vyska_zltej_branky, velkost_zltej_branky, riadok_zltej_branky, stlpec_zltej_branky;
-   int sirka_modrej_branky, vyska_modrej_branky, velkost_modrej_branky, riadok_modrej_branky, stlpec_modrej_branky;
+   while (!mam_veci) {}
+   mam_veci = 0;
 
-   najdi_veci(&sirka_lopty, &vyska_lopty, &velkost_lopty, &riadok_lopty, &stlpec_lopty,
-              &sirka_zltej_branky, &vyska_zltej_branky, &velkost_zltej_branky, &riadok_zltej_branky, &stlpec_zltej_branky,
-              &sirka_modrej_branky, &vyska_modrej_branky, &velkost_modrej_branky, &riadok_modrej_branky, &stlpec_modrej_branky );
-   
-   printf("lopta: s: %d, v: %d, P: %d, R: %d, S: %d\n", sirka_lopty, vyska_lopty, velkost_lopty, riadok_lopty, stlpec_lopty);
-   printf("zlta: s: %d, v: %d, P: %d, R: %d, S: %d\n", sirka_zltej_branky, vyska_zltej_branky, velkost_zltej_branky, riadok_zltej_branky, stlpec_zltej_branky);
-   printf("modra: s: %d, v: %d, P: %d, R: %d, S: %d\n-----\n", sirka_modrej_branky, vyska_modrej_branky, velkost_modrej_branky, riadok_modrej_branky, stlpec_modrej_branky);
+   printf("lopta: s: %d, v: %d, P: %d, R: %d, S: %d\n", veci.sirka_lopty, veci.vyska_lopty, veci.velkost_lopty, veci.riadok_lopty, veci.stlpec_lopty);
+   printf("zlta: s: %d, v: %d, P: %d, R: %d, S: %d\n", veci.sirka_zltej_branky, veci.vyska_zltej_branky, veci.velkost_zltej_branky, veci.riadok_zltej_branky, veci.stlpec_zltej_branky);
+   printf("modra: s: %d, v: %d, P: %d, R: %d, S: %d\n-----\n", veci.sirka_modrej_branky, veci.vyska_modrej_branky, veci.velkost_modrej_branky, veci.riadok_modrej_branky, veci.stlpec_modrej_branky);
 }
  
-int setup_kamera()
-{
-    const char *device = "/dev/video0";
- 
-    kamera_fd = open(device, O_RDWR);
-    if (kamera_fd == -1)
-    {
-        perror("nepodarilo sa otvorit zariadenie /dev/videoN ...");
-        return 1;
-    }
-    if(setup_format(kamera_fd))
-        return 1;
-    
-    if(init_mmap(kamera_fd))
-        return 1;
-
-    init_sledovanie();
-
-    return 0;
-}
-
-void ukonci_kameru()
-{
-    free(rgb);
-    close(kamera_fd);
-}
