@@ -93,9 +93,14 @@ void precitaj_paket_z_arduina()
     unsigned char ch;
     int precital;
 
-    if (arduino_inicializovane == 0) zapis_paket_do_arduina((uint8_t *)"45");
-    do
+    while (arduino_inicializovane == 0) 
     {
+        if ((precital = read(fdCitanie[0], &ch, 1)) == 1)
+            if (ch == '#') {
+                arduino_inicializovane = 1;
+                printf("arduino inicializovane\n");
+            }
+    }
   
       // pockaj na znak $, ktory oznacuje zaciatok paketu
       do {
@@ -136,17 +141,6 @@ void precitaj_paket_z_arduina()
       // precitany znak \n nakoniec vymazeme
       if (precitane == 0) precitane++;
       paket[precitane - 1] = 0;
-  
-      if (arduino_inicializovane == 0)
-      {
-         if (strcmp(paket, "init") == 0) 
-         {
-             arduino_inicializovane = 1;
-             printf("arduino inicializovane\n");
-         }
-      } 
-      else if (arduino_inicializovane == 1) arduino_inicializovane = 2;
-    } while (arduino_inicializovane < 2);
 }
 
 void spracuj_paket_z_arduina()
