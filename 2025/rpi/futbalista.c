@@ -7,6 +7,8 @@
 uint8_t headless = 0;
 int opponent_color = YELLOW;
 
+extern void start_camera_thread();
+
 void navod()
 {
 	printf("0 - navod\n");
@@ -38,6 +40,7 @@ void posli_lopta_vpravo()
 {
     char *s = "21";    
     zapis_paket_do_arduina((uint8_t *)s);
+    printf(">");
 
 }
 
@@ -45,6 +48,7 @@ void posli_lopta_vlavo()
 {
     char *s = "22";    
     zapis_paket_do_arduina((uint8_t *)s);
+    printf("<");
 
 }
 
@@ -52,12 +56,14 @@ void posli_lopta_vstrede()
 {
     char *s = "23";    
     zapis_paket_do_arduina((uint8_t *)s);
+    printf("^");
 }
 
 void posli_nevidi_loptu()
 {
     char *s = "24";    
     zapis_paket_do_arduina((uint8_t *)s);
+    printf("0");
 }
 
 
@@ -67,6 +73,10 @@ int hra()
     zaloguj("futbalista bezi v headless rezime");
     
     do {
+	       //printf("lopta: s: %d, v: %d, P: %d, R: %d, S: %d\n", veci.sirka_lopty, veci.vyska_lopty, veci.velkost_lopty, veci.riadok_lopty, veci.stlpec_lopty);
+   //printf("zlta: s: %d, v: %d, P: %d, R: %d, S: %d\n", veci.sirka_zltej_branky, veci.vyska_zltej_branky, veci.velkost_zltej_branky, veci.riadok_zltej_branky, veci.stlpec_zltej_branky);
+   //printf("modra: s: %d, v: %d, P: %d, R: %d, S: %d\n-----\n", veci.sirka_modrej_branky, veci.vyska_modrej_branky, veci.velkost_modrej_branky, veci.riadok_modrej_branky, veci.stlpec_modrej_branky);
+
 
 	    int je_pred_nami_nasa_branka = 0;
 	    if ((opponent_color == BLUE) && (veci.velkost_zltej_branky > 50))
@@ -117,7 +127,7 @@ void hlavny_program()
 
 void load_color()
 {
-    FILE *f = fopen("/home/robocup/opponent_color", "r");
+    FILE *f = fopen("/home/robotika/opponent_color", "r");
     char s[17];
 
     fgets(s,15,f);
@@ -141,6 +151,7 @@ int main(int argc, char **argv)
     setup_log();
     setup_komunikacia();
     setup_camera_callback(najdi_veci_v_obraze);
+    start_camera_thread();
 
     hlavny_program();
 

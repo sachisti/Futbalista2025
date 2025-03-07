@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <iostream>
 #include <memory>
+#include <cstdlib>
 
 #include <libcamera/libcamera.h>
 
@@ -21,6 +22,8 @@
 using namespace libcamera;
 static std::shared_ptr<Camera> camera;
 EventLoop loop;
+extern int sirka, vyska;
+extern int pocet_beziacich_vlakien;
 
 new_frame_callback frame_callback;
 
@@ -55,22 +58,22 @@ static void requestComplete(Request *request)
 	loop.callLater(std::bind(&processRequest, request));
 }
 
+uint8_t img[640*480*3];
 
 static void processRequest(Request *request)
 {
-    std::cout << std::endl
-              << "Request completed: " << request->toString() << std::endl;
+   // std::cout << std::endl
+   //           << "Request completed: " << request->toString() << std::endl;
 
     const Request::BufferMap &buffers = request->buffers();
     for (auto bufferPair : buffers)
     {
         FrameBuffer *buffer = bufferPair.second;
         const FrameMetadata &metadata = buffer->metadata();
-
+/*
         std::cout << " seq: " << std::setw(6) << std::setfill('0') << metadata.sequence
                   << " timestamp: " << metadata.timestamp
                   << " bytesused: ";
-
         unsigned int nplane = 0;
         for (const FrameMetadata::Plane &plane : metadata.planes())
         {
@@ -79,6 +82,7 @@ static void processRequest(Request *request)
                 std::cout << "/";
         }
         std::cout << std::endl;
+*/
 
         /* Ensure there is at least one valid plane */
         if (buffer->planes().empty() || metadata.planes().empty())
@@ -89,7 +93,9 @@ static void processRequest(Request *request)
 
         /* Map buffer memory */
         const FrameBuffer::Plane &bufferPlane = buffer->planes()[0]; // Used for mapping
-        //const FrameMetadata::Plane &metaPlane = metadata.planes()[0]; // Contains bytesused
+        const FrameMetadata::Plane &metaPlane = metadata.planes()[0]; // Contains bytesused
+								 
+	//printf("bytes used: %d\n", metaPlane.bytesused);
 
         void *data = mmap(nullptr, bufferPlane.length, PROT_READ, MAP_SHARED,
                           bufferPlane.fd.get(), 0);
@@ -102,7 +108,7 @@ static void processRequest(Request *request)
 
         /* Print pixel values (assumes YUV420 format) */
         uint8_t *yuvData = static_cast<uint8_t *>(data);
-	/*
+/*
         size_t numPixels = metaPlane.bytesused;  // Get correct bytes used from metadata
 
         std::cout << "Pixel values:" << std::endl;
@@ -113,10 +119,13 @@ static void processRequest(Request *request)
                 std::cout << std::endl;
         }
         std::cout << std::endl;
+*/
+	memcpy(img, yuvData, 640*480*3);
 
-	*/
+        //printf("%d\n", static_cast<int>(yuvData[0]));	
+        //printf("%hhd\n", yuvData[0]);	
 
-	frame_callback(yuvData);
+	frame_callback(img);
 
         /* Unmap memory after use */
         munmap(data, bufferPlane.length);
@@ -242,8 +251,10 @@ std::string cameraName(Camera *camera)
 	return name;
 }
 
-extern "C" int camera_main(int width, int height)
+extern "C" void *camera_main(void *args)
 {
+	int width = sirka;
+	int height = vyska;
 	/*
 	 * --------------------------------------------------------------------
 	 * Create a Camera Manager.
@@ -298,7 +309,7 @@ extern "C" int camera_main(int width, int height)
 		std::cout << "No cameras were identified on the system."
 			  << std::endl;
 		cm->stop();
-		return EXIT_FAILURE;
+		return 0;
 	}
 
 	std::string cameraId = cm->cameras()[0]->id();
@@ -378,11 +389,12 @@ extern "C" int camera_main(int width, int height)
 	streamConfig.size.width = width; 
 	streamConfig.size.height = height; 
 	streamConfig.pixelFormat = libcamera::formats::RGB888;
+        streamConfig.bufferCount = 1;
 
 	int ret = camera->configure(config.get());
 	if (ret) {
 		std::cout << "CONFIGURATION FAILED!" << std::endl;
-		return EXIT_FAILURE;
+		return 0;
 	}
 //#endif
 
@@ -428,7 +440,7 @@ extern "C" int camera_main(int width, int height)
 		int ret = allocator->allocate(cfg.stream());
 		if (ret < 0) {
 			std::cerr << "Can't allocate buffers" << std::endl;
-			return EXIT_FAILURE;
+			return 0;
 		}
 
 		size_t allocated = allocator->buffers(cfg.stream()).size();
@@ -461,7 +473,7 @@ extern "C" int camera_main(int width, int height)
 		if (!request)
 		{
 			std::cerr << "Can't create request" << std::endl;
-			return EXIT_FAILURE;
+			return 0;
 		}
 
 		const std::unique_ptr<FrameBuffer> &buffer = buffers[i];
@@ -470,14 +482,14 @@ extern "C" int camera_main(int width, int height)
 		{
 			std::cerr << "Can't set buffer for request"
 				  << std::endl;
-			return EXIT_FAILURE;
+			return 0;
 		}
 
 		/*
 		 * Controls can be added to a request on a per frame basis.
 		 */
 		ControlList &controls = request->controls();
-		controls.set(controls::Brightness, 0.5);
+		controls.set(controls::Brightness, 0.2);
 
 		requests.push_back(std::move(request));
 	}
@@ -544,6 +556,18 @@ extern "C" int camera_main(int width, int height)
 	camera.reset();
 	cm->stop();
 
-	return EXIT_SUCCESS;
+	return 0;
 }
+
+extern "C" void start_camera_thread()
+{
+    pthread_t t;
+    if (pthread_create(&t, 0, camera_main, 0) != 0)
+    {
+      perror("nepodarilo sa vytvorit thread");
+      exit(-1);
+    }
+    else pocet_beziacich_vlakien++;
+}
+
 

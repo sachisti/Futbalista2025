@@ -29,7 +29,7 @@ void ukonci_komunikaciu();
 
 void najdi_veci_v_obraze(uint8_t *RGB);
 void test_kamery();
-
+uint64_t usec();
 
 // logovanie
 void setup_log();

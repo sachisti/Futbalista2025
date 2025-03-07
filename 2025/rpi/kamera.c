@@ -25,10 +25,8 @@
 #define VEC_ZLTA_BRANKA   1
 #define VEC_MODRA_BRANKA  2
 
-int sirka = 1920;
-int vyska = 1080;
-
-uint8_t *buffer;
+int sirka = 640; //1920;
+int vyska = 480; //1080;
 
 hladane_veci veci;
 int mam_veci = 0;
@@ -117,7 +115,7 @@ int je_vec (uint8_t r, uint8_t g, uint8_t b, int vec)
   return 0;
 }
 
-void zisti_rgb(int riadok, int stlpec, uint8_t *r, uint8_t *g, uint8_t *b)
+void zisti_rgb(uint8_t *buffer, int riadok, int stlpec, uint8_t *r, uint8_t *g, uint8_t *b)
 {
   	      *b = buffer[riadok * sirka * 3 + stlpec * 3];
   	      *g = buffer[riadok * sirka * 3 + stlpec * 3 + 1];
@@ -126,7 +124,7 @@ void zisti_rgb(int riadok, int stlpec, uint8_t *r, uint8_t *g, uint8_t *b)
 
 int minr, mins, maxr, maxs;
 
-int fill(int riadok, int stlpec, int vec)
+int fill(uint8_t *buffer, int riadok, int stlpec, int vec)
 {
   if (riadok < minr) minr = riadok;
   if (riadok > maxr) maxr = riadok;
@@ -139,26 +137,26 @@ int fill(int riadok, int stlpec, int vec)
   
   uint8_t r, g, b;
   
-  zisti_rgb(riadok, stlpec + 1, &r, &g, &b);
+  zisti_rgb(buffer, riadok, stlpec + 1, &r, &g, &b);
   int kolko = 1;
   
   if (je_vec(r, g, b, vec))
-    kolko += fill(riadok, stlpec + 1, vec);
+    kolko += fill(buffer, riadok, stlpec + 1, vec);
 
-  zisti_rgb(riadok, stlpec - 1, &r, &g, &b);
+  zisti_rgb(buffer, riadok, stlpec - 1, &r, &g, &b);
   
   if (je_vec(r, g, b, vec))
-    kolko += fill(riadok, stlpec - 1, vec);
+    kolko += fill(buffer, riadok, stlpec - 1, vec);
 
-  zisti_rgb(riadok - 1, stlpec, &r, &g, &b);
+  zisti_rgb(buffer, riadok - 1, stlpec, &r, &g, &b);
     
   if (je_vec(r, g, b, vec))
-    kolko += fill(riadok - 1, stlpec, vec);
+    kolko += fill(buffer, riadok - 1, stlpec, vec);
 
-  zisti_rgb(riadok + 1, stlpec, &r, &g, &b);
+  zisti_rgb(buffer, riadok + 1, stlpec, &r, &g, &b);
   
   if (je_vec(r, g, b, vec))
-    kolko += fill(riadok + 1, stlpec, vec);
+    kolko += fill(buffer, riadok + 1, stlpec, vec);
 
   return kolko;
 }
@@ -166,7 +164,7 @@ int fill(int riadok, int stlpec, int vec)
 //camera callback
 void najdi_veci_v_obraze(uint8_t *RGB)
 {
-      buffer = RGB;
+      uint8_t *buffer = RGB;
       uint8_t *p = (uint8_t *)buffer;
 
       // prechadzame cely obrazok bod po bode...
@@ -216,7 +214,7 @@ void najdi_veci_v_obraze(uint8_t *RGB)
   	      if (je_vec(r, g, b, VEC_LOPTA))
   	      {
                   mins = sirka, minr = vyska, maxs = -1, maxr = -1;
-                  int pocet = fill(i, j, VEC_LOPTA);
+                  int pocet = fill(buffer, i, j, VEC_LOPTA);
                   if (pocet > doteraz_najvacsi[VEC_LOPTA])
                   {
                       doteraz_najvacsi[VEC_LOPTA] = pocet;
@@ -229,7 +227,7 @@ void najdi_veci_v_obraze(uint8_t *RGB)
           else if (je_vec(r, g, b, VEC_MODRA_BRANKA))
           {
                   mins = sirka, minr = vyska, maxs = -1, maxr = -1;
-                  int pocet = fill(i, j, VEC_MODRA_BRANKA);
+                  int pocet = fill(buffer, i, j, VEC_MODRA_BRANKA);
                   if (pocet > doteraz_najvacsi[VEC_MODRA_BRANKA])
                   {
                       doteraz_najvacsi[VEC_MODRA_BRANKA] = pocet;
@@ -242,7 +240,7 @@ void najdi_veci_v_obraze(uint8_t *RGB)
           else if (je_vec(r, g, b, VEC_ZLTA_BRANKA))
           {
                   mins = sirka, minr = vyska, maxs = -1, maxr = -1;
-                  int pocet = fill(i, j, VEC_ZLTA_BRANKA);
+                  int pocet = fill(buffer, i, j, VEC_ZLTA_BRANKA);
                   if (pocet > doteraz_najvacsi[VEC_ZLTA_BRANKA])
                   {
                       doteraz_najvacsi[VEC_ZLTA_BRANKA] = pocet;
@@ -293,11 +291,11 @@ void najdi_veci_v_obraze(uint8_t *RGB)
       //~ }
 }
 
-long long usec()
+uint64_t usec()
 {
   struct timeval tv;
   gettimeofday(&tv, 0);
-  return (1000000L * (long long)tv.tv_sec) + tv.tv_usec;
+  return (1000000UL * (uint64_t)tv.tv_sec) + tv.tv_usec;
 }
 
 void test_kamery()

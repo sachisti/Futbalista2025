@@ -11,7 +11,6 @@ extern "C"  {
         typedef void (*new_frame_callback)(uint8_t *RGB);
 
         void setup_camera_callback(new_frame_callback callback_fn);
-	int camera_main(int width, int height);
 
 #ifdef __cplusplus
 }
