@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
+
 
 #include "futbalista.h"
 #include "camera_module.h"
@@ -117,6 +119,15 @@ void hlavny_program()
         sscanf(sprava, "%d", &a);
         if (a == 0) navod();
 	    else if (a == 9) test_kamery();
+	    else if (a == 10) 
+	    {
+		    for (int poc = 0; poc < 300; poc++)
+		    {
+		      test_kamery();
+		      usleep(100000);
+		    }
+	    }
+
         else
         {
             sprintf(sprava, "%d", a);
