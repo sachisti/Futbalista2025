@@ -1,0 +1,17 @@
+[Unit]
+Description=Send IP service
+After=network.target remote-fs.target nss-lookup.target 
+
+[Service]
+User=robotika
+Group=robotika
+ExecStart=/home/robotika/send_ip/sendip.sh
+WorkingDirectory=/home/robotika
+Restart=no
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=sendip
+
+[Install]
+WantedBy=multi-user.target
+
