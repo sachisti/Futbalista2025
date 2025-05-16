@@ -96,13 +96,13 @@ int je_vec (uint8_t r, uint8_t g, uint8_t b, int vec)
   
   if (vec == VEC_LOPTA)
   {    
-    if ((h < 30) && (h > 0) && (s > 0.65) && (v > 75)){
+    if ((h < 35) && (h > 0) && (s > 0.45) && (v > 65)){
       return 1;
     }
   }
   else if (vec == VEC_MODRA_BRANKA)
   {
-     if (((h > 200) && (h < 240)) && (s > 0.4) && (v > 40) && (v < 150)){
+     if (((h > 186) && (h < 240)) && (s > 0.4) && (v > 20) && (v < 150)){
       return 1;
     }    
   }
