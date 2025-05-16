@@ -4,12 +4,14 @@
 
 
 #include "futbalista.h"
-#include "camera_module.h"
+#include "v4l_module.h"
+#include "gui.h"
 
 uint8_t headless = 0;
+uint8_t gui = 0;
 int opponent_color = YELLOW;
 
-extern void start_camera_thread();
+//extern void start_camera_thread();
 
 void navod()
 {
@@ -138,7 +140,7 @@ void hlavny_program()
 
 void load_color()
 {
-    FILE *f = fopen("/home/robotika/opponent_color", "r");
+    FILE *f = fopen("/home/pi/opponent_color", "r");
     char s[17];
 
     fgets(s,15,f);
@@ -157,9 +159,11 @@ void load_color()
 int main(int argc, char **argv)
 {
     if ((argc > 1) && (strcmp(argv[1], "headless") == 0)) headless = 1;
+    if ((argc > 1) && (strcmp(argv[1], "gui") == 0)) gui = 1;
     
     load_color();
     setup_log();
+    if (gui) setup_gui();
     setup_komunikacia();
     setup_camera_callback(najdi_veci_v_obraze);
     start_camera_thread();
@@ -167,6 +171,7 @@ int main(int argc, char **argv)
     hlavny_program();
 
     ukonci_komunikaciu();
+    shutdown_gui();
     return 0;
 }
 

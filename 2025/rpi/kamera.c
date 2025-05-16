@@ -12,8 +12,9 @@
 #include <sys/time.h>
 
 #include "pngwriter.h"
-#include "camera_module.h"
+#include "v4l_module.h"
 #include "futbalista.h"
+#include "gui.h"
 
 
 #define VYSKA_OBRAZU 1       //bolo to 2/3, skusime dat cely obraz
@@ -25,8 +26,10 @@
 #define VEC_ZLTA_BRANKA   1
 #define VEC_MODRA_BRANKA  2
 
-int sirka = 640; //1920;
-int vyska = 480; //1080;
+uint8_t farba_veci[3][3] = { { 70, 255, 70 }, { 70, 70, 200}, {200, 200, 70 } };
+
+int sirka = 1280; // 640; //1920;
+int vyska = 720; // 480; //1080;
 
 hladane_veci veci;
 int mam_veci = 0;
@@ -53,7 +56,6 @@ int je_vec (uint8_t r, uint8_t g, uint8_t b, int vec)
       min = g;
     }
   }
-
 
   if (r > b){
     if(r > g){
@@ -100,13 +102,13 @@ int je_vec (uint8_t r, uint8_t g, uint8_t b, int vec)
   }
   else if (vec == VEC_MODRA_BRANKA)
   {
-     if (((h > 200) && (h < 220)) && (s > 0.7) && (v > 60) && (v < 150)){
+     if (((h > 200) && (h < 240)) && (s > 0.4) && (v > 40) && (v < 150)){
       return 1;
     }    
   }
   else if (vec == VEC_ZLTA_BRANKA)
   {
-     if (((h > 47) && (h < 65)) && (s > 0.6) && (v > 120)){
+     if (((h > 45) && (h < 65)) && (s > 0.4) && (v > 120)){
       return 1;
       
     }
@@ -131,9 +133,9 @@ int fill(uint8_t *buffer, int riadok, int stlpec, int vec)
   if (stlpec < mins) mins = stlpec;
   if (stlpec > maxs) maxs = stlpec;
   
-  buffer[riadok * sirka * 3 + stlpec * 3] = 70;
-  buffer[riadok * sirka * 3 + stlpec * 3 + 1] = 255;
-  buffer[riadok * sirka * 3 + stlpec * 3 + 2] = 70;
+  buffer[riadok * sirka * 3 + stlpec * 3] = farba_veci[vec][0];
+  buffer[riadok * sirka * 3 + stlpec * 3 + 1] = farba_veci[vec][1];
+  buffer[riadok * sirka * 3 + stlpec * 3 + 2] = farba_veci[vec][2];
   
   uint8_t r, g, b;
   
@@ -164,6 +166,7 @@ int fill(uint8_t *buffer, int riadok, int stlpec, int vec)
 //camera callback
 void najdi_veci_v_obraze(uint8_t *RGB)
 {
+
       uint8_t *buffer = RGB;
       uint8_t *p = (uint8_t *)buffer;
 
@@ -273,6 +276,7 @@ void najdi_veci_v_obraze(uint8_t *RGB)
       veci.stlpec_modrej_branky = doteraz_najv_stlpec[VEC_MODRA_BRANKA];
       
       mam_veci = 1;
+      if (gui) gui_putimage(buffer);
 
       //static int iter = 0;
       
