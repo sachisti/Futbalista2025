@@ -8,7 +8,7 @@ void setup_log()
 {
   time(&time_started);
 
-  sprintf(logsubor, "/home/robocup/logs/%lu.txt", time_started);
+  sprintf(logsubor, "/home/pi/logs/%lu.txt", time_started);
 
 }
 

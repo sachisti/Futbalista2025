@@ -29,6 +29,7 @@ void test_left_motor(int where);
 void test_right_motor(int where);
 void test_back_motor(int where);
 
+void usmerneny_pohyb(int where);
 
 // vypinace
 

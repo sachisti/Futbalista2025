@@ -43,6 +43,8 @@ volatile uint8_t on1, off1, on2, off2, on3, off3;
 
 static uint8_t kam_ide = STOJI;
 
+static uint8_t curr_speed = 10;   // 0..20
+
 void setup_pohyb()
 {
   r1 = 0;
@@ -109,6 +111,11 @@ void motor_speed(uint8_t motor, uint8_t speed)
     case 3: r3 = speed; break;
   }
 }
+
+
+#define ML  2
+#define MR  1
+#define MB  3
 
 void motor_smer(uint8_t motor, uint8_t smer)
 {
@@ -341,6 +348,36 @@ void test_back_motor(int where) {
   motor_smer(MR, RBWD);
   motor_speed(ML, 0);
   motor_smer(ML, LFWD);
+}
+
+void segment_f(int where) {
+  r3 = curr_speed;
+  r1 = -curr_speed*where/180;
+  r2 = -curr_speed * (180+where)/180;
+  motor_smer(ML, LBWD);
+  motor_smer(MR, RBWD);
+  motor_smer(MB, BRT);
+}
+
+void segment_a(int where) {
+
+}
+
+void segment_b(int where) {
+
+}
+
+void segment_c(int where) {
+
+}
+
+void usmerneny_pohyb(int where) {
+where*=2;
+where-=90;
+if (where <= -60) segment_f(where);
+else if (where <= 0) segment_a(where);
+else if (where <= 60) segment_b(where);
+else segment_c(where);
 }
 
 void riadenie_cez_seriovy_port()

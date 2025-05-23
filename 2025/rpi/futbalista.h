@@ -10,6 +10,8 @@ extern int opponent_color;
 extern int sirka;
 extern int vyska;
 
+extern uint8_t gui;
+
 typedef struct veci_str {
    int sirka_lopty, vyska_lopty, velkost_lopty, riadok_lopty, stlpec_lopty;
    int sirka_zltej_branky, vyska_zltej_branky, velkost_zltej_branky, riadok_zltej_branky, stlpec_zltej_branky;
@@ -29,7 +31,7 @@ void ukonci_komunikaciu();
 
 void najdi_veci_v_obraze(uint8_t *RGB);
 void test_kamery();
-
+uint64_t usec();
 
 // logovanie
 void setup_log();
