@@ -350,34 +350,35 @@ void test_back_motor(int where) {
   motor_smer(ML, LFWD);
 }
 
-void segment_f(int where) {
-  r3 = curr_speed;
-  r1 = -curr_speed*where/180;
-  r2 = -curr_speed * (180+where)/180;
-  motor_smer(ML, LBWD);
+void segment_f(int where) {  // to the right (where=-90..-60)
+  r1 = curr_speed;
+  r3 = -curr_speed*where/180;
+  r2 = curr_speed * (180+where)/180;
+  motor_smer(ML, LFWD);
   motor_smer(MR, RBWD);
   motor_smer(MB, BRT);
 }
 
-void segment_a(int where) {
+void segment_a(int where) {   // to front right (where=-60..0)
 
 }
 
-void segment_b(int where) {
+void segment_b(int where) {   // to front left (where=0..60)
 
 }
 
-void segment_c(int where) {
+void segment_c(int where) {   // to the left (where=60..90)
 
 }
 
 void usmerneny_pohyb(int where) {
-where*=2;
-where-=90;
-if (where <= -60) segment_f(where);
-else if (where <= 0) segment_a(where);
-else if (where <= 60) segment_b(where);
-else segment_c(where);
+  where *= 2;    // resolution 2 degrees / unit, scale back to degrees
+  where -= 90;   // convert from 0..180 to -90 to 90
+  // currently only segments in forward 180 degrees directions are covered
+  if (where <= -60) segment_f(where);
+  else if (where <= 0) segment_a(where);
+  else if (where <= 60) segment_b(where);
+  else segment_c(where);
 }
 
 void riadenie_cez_seriovy_port()
