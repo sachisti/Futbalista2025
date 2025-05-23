@@ -19,6 +19,29 @@ static uint32_t *data = 0;
 static int stride = 0;
 static Window win;
 
+static const int GRID_COLS = 10;
+static const int GRID_ROWS = 10;
+
+void draw_grid()
+{
+    int data_line_width = (stride / 4);
+    int white = 0x00FFFFFF;
+    
+    for (int i = 1; i < GRID_COLS; i++)
+    {
+        int x = sirka * i / 10;
+        for (int j = 0; j < vyska; j++)
+            data[j * data_line_width + x] = white;       
+    }
+    
+    for (int i = 1; i < GRID_ROWS; i++)
+    {
+        int y = vyska * i / 10;
+        memset(&(data[y * data_line_width]), 0xFF, sirka * 4);
+    }
+}
+
+
 void gui_putimage(uint8_t *img)
 {
     if (img == 0) return;
@@ -33,6 +56,9 @@ void gui_putimage(uint8_t *img)
             data[y * data_line_width + x] = (((int)(r)) << 16) | (((int)g) << 8) | b;
         }
     }
+    
+    draw_grid();
+    
     XClearArea(dpy, win, 0, 0, 0, 0, True);
 }
 
