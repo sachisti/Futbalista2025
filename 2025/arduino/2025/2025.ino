@@ -15,10 +15,10 @@ void setup()
 
 void loop()
 {
+
   komunikacia();
   
   strategia();
-  
   kontrola_senzorov();
   
   if (start_on())
@@ -26,4 +26,5 @@ void loop()
     zastav();
     while (start_on());
   }
+
 }

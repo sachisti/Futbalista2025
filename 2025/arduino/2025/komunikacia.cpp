@@ -13,7 +13,17 @@ void setup_komunikacia()
 {
   p = paket;
   citam = 0;
-  Serial.println("$init");
+  while (1)
+  {  
+    Serial.print("#");
+    delay(100);
+    if (Serial.available())
+    {
+      char c = Serial.read();
+      if (c == '%') break; 
+    }
+  }
+  Serial.write('^');
 }
 
 
@@ -25,6 +35,8 @@ void setup_komunikacia()
 
 void spracuj_paket()
 {
+  Serial.print("!p:");
+  Serial.println((char *)(paket));
   // na tomto mieste mame v poli paket[] prijaty 0-ukonceny retazec znakov
   int a;
   // v tejto ukazke retazec dekodujeme ako cislo a vypiseme spravu s dvojnasobkom

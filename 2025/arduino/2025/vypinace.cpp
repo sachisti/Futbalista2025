@@ -1,8 +1,8 @@
 #include <Arduino.h>
 #include "futbalista.h"
 
-#define START_SWITCH 8
-#define CONFIG_SWITCH 9
+#define START_SWITCH 11
+#define CONFIG_SWITCH 12
 
 void setup_vypinace()
 {
@@ -28,16 +28,16 @@ void test_vypinace()
   {
     if (digitalRead(START_SWITCH) == 0)
     {
-      digitalWrite(13, HIGH);
+//      digitalWrite(13, HIGH);
       delay(200);
-      digitalWrite(13, LOW);
+//      digitalWrite(13, LOW);
       delay(200);
     }
     if (digitalRead(CONFIG_SWITCH) == 0)
     {
-      digitalWrite(13, HIGH);
+//      digitalWrite(13, HIGH);
       delay(400);
-      digitalWrite(13, LOW);
+//      digitalWrite(13, LOW);
       delay(400);
     }
   }

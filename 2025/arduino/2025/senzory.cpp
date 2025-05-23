@@ -53,10 +53,10 @@ int vidi_ciaru()
         else val=analogRead (i);
      
         if (val<prah[i]){
-          digitalWrite(13,HIGH);
+          //digitalWrite( ,HIGH);
           return 1;
         }
-        digitalWrite(13,LOW);
+        //digitalWrite(13,LOW);
     }
     return 0;
 }

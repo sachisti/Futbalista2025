@@ -8,22 +8,22 @@
 #define M2_IN1 6
 #define M2_IN2 7
 
-#define M3_IN1 2
-#define M3_IN2 3
+#define M3_IN1 8
+#define M3_IN2 9
 
 // 1 - back
 // 2 - right
 // 3 - left
 #define ML  2
-#define MR  1
-#define MB  3
+#define MR  3
+#define MB  1
 
 #define LFWD 0
 #define LBWD 1
 #define RFWD 0
 #define RBWD 1
-#define BRT  0
-#define BLT  1
+#define BRT  1
+#define BLT  0
 
 // kam ide
 #define IDE_VPRAVO       1
@@ -262,11 +262,11 @@ void dokola() {
   kam_ide = TOCI_SA;
   //digitalWrite(13, HIGH);
   motor_smer(MB, BLT);
-  motor_speed(MB, 10);
+  motor_speed(MB, 6);
   motor_smer(MR, RBWD);
-  motor_speed(MR, 10);
+  motor_speed(MR, 6);
   motor_smer(ML, LFWD);
-  motor_speed(ML, 10);
+  motor_speed(ML, 6);
 }
 
 
