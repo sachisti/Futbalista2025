@@ -26,8 +26,8 @@ void navod()
 	printf("8 - test zastav\n");
 	printf("9 - test kamery\n");
 	printf("11 - start hry\n");
-	printf("100 - koniec\n");
-	printf("9999 - test komunikacie\n");
+	printf("80 - koniec\n");
+	printf("90 - test komunikacie\n");
 	printf("31 - Arduino dolava_vzad()\n");
 	printf("32 - Arduino doprava_vzad()\n");
 	printf("33 - Arduino dozadu()\n");
@@ -135,7 +135,7 @@ void hlavny_program()
             sprintf(sprava, "%d", a);
             zapis_paket_do_arduina((uint8_t *)sprava);
         }
-    } while (a != 100);
+    } while (a != 80);
 }
 
 void load_color()

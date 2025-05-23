@@ -30,8 +30,8 @@ void spracuj_paket()
   // v tejto ukazke retazec dekodujeme ako cislo a vypiseme spravu s dvojnasobkom
   // vo vasom pripade budete na tomto mieste reagovat na spravu podla potreby...
   sscanf((char *)paket, "%d", &a);
-
-  if (a == 1) test_senzorov();
+  if (a >= 97) usmerneny_pohyb(a-97);
+  else if (a == 1) test_senzorov();
   else if (a == 2) test_vypinace();
   else if (a == 3) test_motors();
   else if (a == 4) dokola(); 
@@ -44,7 +44,7 @@ void spracuj_paket()
   else if (a == 32) doprava_vzad();
   else if (a == 33) dozadu();
   
-  else if (a == 9999) Serial.print("$zelena je trava\n");
+  else if (a == 90) Serial.print("$zelena je trava\n");
   
   else if (a == 21) doprava();
   else if (a == 22) dolava();
@@ -61,6 +61,7 @@ void spracuj_paket()
 
   else if (a == 45) setup_komunikacia();
   //else if (a == 46) test_kompas();
+  
   
 }
 
