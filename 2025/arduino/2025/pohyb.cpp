@@ -15,8 +15,8 @@
 // 2 - right
 // 3 - left
 #define ML  2
-#define MR  1
-#define MB  3
+#define MR  3
+#define MB  1
 
 #define LFWD 0
 #define LBWD 1
@@ -43,7 +43,7 @@ volatile uint8_t on1, off1, on2, off2, on3, off3;
 
 static uint8_t kam_ide = STOJI;
 
-static uint8_t curr_speed = 10;   // 0..20
+static uint8_t curr_speed = 20;   // 0..20
 
 void setup_pohyb()
 {
@@ -112,11 +112,6 @@ void motor_speed(uint8_t motor, uint8_t speed)
   }
 }
 
-
-#define ML  2
-#define MR  1
-#define MB  3
-
 void motor_smer(uint8_t motor, uint8_t smer)
 {
   switch (motor)
@@ -126,8 +121,6 @@ void motor_smer(uint8_t motor, uint8_t smer)
     case 3: digitalWrite(M3_IN2, smer); off3 = smer; on3 = 1 - smer; break;
   }
 }
-
-
 
 void test_motors2()
 {
@@ -351,8 +344,8 @@ void test_back_motor(int where) {
 }
 
 void segment_f(int where) {  // to the right (where=-90..-60)
-  r3 = curr_speed;
-  r1 = curr_speed*(-60-where)/60;
+  r1 = curr_speed;
+  r3 = curr_speed*(-60-where)/60;
   r2 = curr_speed*(where+120)/60;
   motor_smer(ML, LFWD);
   motor_smer(MR, RBWD);
@@ -361,26 +354,26 @@ void segment_f(int where) {  // to the right (where=-90..-60)
 
 void segment_a(int where) {   // to front right (where=-60..0)
   r2 = curr_speed;
-  r1 = curr_speed*(where+60)/60;
-  r3 = -curr_speed*(where/60);
+  r3 = curr_speed*(where+60)/60;
+  r1 = -curr_speed*(where/60);
   motor_smer(ML, LFWD);
   motor_smer(MR, RFWD);
   motor_smer(MB, BRT);
 }
 
 void segment_b(int where) {   // to front left (where=0..60)
-  r1 = curr_speed;
+  r3 = curr_speed;
   r2 = curr_speed*(60-where)/60;
-  r3 = curr_speed*where/60;
+  r1 = curr_speed*where/60;
   motor_smer(ML, LFWD);
   motor_smer(MR, RFWD);
   motor_smer(MB, BLT);
 }
 
 void segment_c(int where) {   // to the left (where=60..90)
-  r3 = curr_speed;
+  r1 = curr_speed;
   r2 = curr_speed*(where-60)/60;
-  r1 = curr_speed*(120-where)/60;
+  r3 = curr_speed*(120-where)/60;
   motor_smer(ML, LBWD);
   motor_smer(MR, RFWD);
   motor_smer(MB, BLT);
