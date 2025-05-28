@@ -352,8 +352,8 @@ void test_back_motor(int where) {
 
 void segment_f(int where) {  // to the right (where=-90..-60)
   r1 = curr_speed;
-  r3 = -curr_speed*where/180;
-  r2 = curr_speed*(180+where)/180;
+  r3 = curr_speed*(-60-where)/60;
+  r2 = curr_speed*(where+120)/60;
   motor_smer(ML, LFWD);
   motor_smer(MR, RBWD);
   motor_smer(MB, BRT);
@@ -361,28 +361,28 @@ void segment_f(int where) {  // to the right (where=-90..-60)
 
 void segment_a(int where) {   // to front right (where=-60..0)
   r2 = curr_speed;
-  r3 = ;
-  r1 = ;
+  r3 = curr_speed*(where+60)/60;
+  r1 = -curr_speed*(where/60);
   motor_smer(ML, LFWD);
   motor_smer(MR, RFWD);
-  motor_smer(MB, BLT);
+  motor_smer(MB, BRT);
 }
 
 void segment_b(int where) {   // to front left (where=0..60)
   r3 = curr_speed;
-  r2 = ;
-  r1 = ;
+  r2 = curr_speed*(60-where)/60;
+  r1 = curr_speed*where/60;
   motor_smer(ML, LFWD);
   motor_smer(MR, RFWD);
   motor_smer(MB, BLT);
 }
 
 void segment_c(int where) {   // to the left (where=60..90)
-  r2 = curr_speed;
-  r1 = ;
-  r3 = ;
+  r1 = curr_speed;
+  r2 = curr_speed*(where-60)/60;
+  r3 = curr_speed*(120-where)/60;
   motor_smer(ML, LBWD);
-  motor_smer(MR, FWD);
+  motor_smer(MR, RFWD);
   motor_smer(MB, BLT);
 }
 
