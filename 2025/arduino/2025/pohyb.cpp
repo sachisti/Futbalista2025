@@ -15,8 +15,8 @@
 // 2 - right
 // 3 - left
 #define ML  2
-#define MR  3
-#define MB  1
+#define MR  1
+#define MB  3
 
 #define LFWD 0
 #define LBWD 1
@@ -351,8 +351,8 @@ void test_back_motor(int where) {
 }
 
 void segment_f(int where) {  // to the right (where=-90..-60)
-  r1 = curr_speed;
-  r3 = curr_speed*(-60-where)/60;
+  r3 = curr_speed;
+  r1 = curr_speed*(-60-where)/60;
   r2 = curr_speed*(where+120)/60;
   motor_smer(ML, LFWD);
   motor_smer(MR, RBWD);
@@ -361,26 +361,26 @@ void segment_f(int where) {  // to the right (where=-90..-60)
 
 void segment_a(int where) {   // to front right (where=-60..0)
   r2 = curr_speed;
-  r3 = curr_speed*(where+60)/60;
-  r1 = -curr_speed*(where/60);
+  r1 = curr_speed*(where+60)/60;
+  r3 = -curr_speed*(where/60);
   motor_smer(ML, LFWD);
   motor_smer(MR, RFWD);
   motor_smer(MB, BRT);
 }
 
 void segment_b(int where) {   // to front left (where=0..60)
-  r3 = curr_speed;
+  r1 = curr_speed;
   r2 = curr_speed*(60-where)/60;
-  r1 = curr_speed*where/60;
+  r3 = curr_speed*where/60;
   motor_smer(ML, LFWD);
   motor_smer(MR, RFWD);
   motor_smer(MB, BLT);
 }
 
 void segment_c(int where) {   // to the left (where=60..90)
-  r1 = curr_speed;
+  r3 = curr_speed;
   r2 = curr_speed*(where-60)/60;
-  r3 = curr_speed*(120-where)/60;
+  r1 = curr_speed*(120-where)/60;
   motor_smer(ML, LBWD);
   motor_smer(MR, RFWD);
   motor_smer(MB, BLT);
