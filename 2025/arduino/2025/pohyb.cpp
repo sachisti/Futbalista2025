@@ -88,9 +88,12 @@ void setup_pohyb()
 }
 
 void kick() {
- digitalWrite(10, HIGH);
- delay(250);
- digitalWrite(10, LOW);
+ for (int i = 0;i<2;i++) {
+  digitalWrite(10, HIGH);
+  delay(90);
+  digitalWrite(10, LOW);
+  delay(100);
+  }
 }
 
 void simple_test_motors()

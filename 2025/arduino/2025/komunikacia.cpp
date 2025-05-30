@@ -92,7 +92,8 @@ void precitaj_dalsi_znak()
     {
       *p = 0;
       citam = 0;
-      spracuj_paket();
+      if (p > paket)
+        spracuj_paket();
       p = paket;
     }
   }
