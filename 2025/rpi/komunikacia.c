@@ -150,14 +150,15 @@ void precitaj_paket_z_arduina()
 
     if (!arduino_inicializovane)
     {
-	write(fdZapis[1], "$45\n", 4);
+	    write(fdZapis[1], "$45\n", 4);
     }
     while (arduino_inicializovane == 0) 
     {
         if ((precital = read(fdCitanie[0], &ch, 1)) == 1)
+	    {
             if (ch == '#') {
                 arduino_inicializovane = 1;
-		int zapisal = write(fdZapis[1], "%", 1);
+		        int zapisal = write(fdZapis[1], "%", 1);
                 if (zapisal < 1)
                 {
                    perror("nepodarilo sa zapisat paket do arduina");
@@ -165,6 +166,7 @@ void precitaj_paket_z_arduina()
                 }
                 printf("arduino inicializovane\n");
             }
+	    }
     }
   
       static uint8_t komentar;
