@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include "futbalista.h"
 
-#define KCK 10
 
 #define M1_IN1 4
 #define M1_IN2 5
@@ -65,6 +64,7 @@ void setup_pohyb()
   pinMode(M2_IN2, OUTPUT);
   pinMode(M3_IN1, OUTPUT);
   pinMode(M3_IN2, OUTPUT);
+  pinMode(10, OUTPUT);
 
   digitalWrite(M1_IN1, LOW);
   digitalWrite(M1_IN2, LOW);
@@ -88,9 +88,9 @@ void setup_pohyb()
 }
 
 void kick() {
- digitalWrite(KCK, HIGH);
- delay(500);
- digitalWrite(KCK, LOW);
+ digitalWrite(10, HIGH);
+ delay(250);
+ digitalWrite(10, LOW);
 }
 
 void simple_test_motors()
