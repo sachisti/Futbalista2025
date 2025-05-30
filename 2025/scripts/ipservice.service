@@ -1,0 +1,17 @@
+[Unit]
+Description=Send IP service
+After=network.target remote-fs.target nss-lookup.target 
+
+[Service]
+User=pi
+Group=pi
+ExecStart=/home/pi/send_ip/sendip.sh
+WorkingDirectory=/home/pi/send_ip
+Restart=no
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=sendip
+
+[Install]
+WantedBy=multi-user.target
+
