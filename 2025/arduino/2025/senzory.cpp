@@ -91,6 +91,12 @@ void kalibracia()
   zapis_kalibraciu_do_EEPROM();
 }
 
+void soft_kalibracia()
+{
+ while (config_on());
+ kalibracia(); 
+}
+
 void setup_senzory() 
 {  
   //Serial.println("$Zacinam kalibraciu.");

@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "futbalista.h"
 
+#define KCK 10
 
 #define M1_IN1 4
 #define M1_IN2 5
@@ -43,7 +44,7 @@ volatile uint8_t on1, off1, on2, off2, on3, off3;
 
 static uint8_t kam_ide = STOJI;
 
-static uint8_t curr_speed = 20;   // 0..20
+static uint8_t curr_speed = 100;   // 0..20
 
 void setup_pohyb()
 {
@@ -72,7 +73,8 @@ void setup_pohyb()
   digitalWrite(M3_IN1, LOW);
   digitalWrite(M3_IN2, LOW);
 
-  ICR1 = 1600;  // timer1 freq. = 10kHz
+  ICR1 = 160;  // timer1, freq = 100kHz
+  // 1600;  // timer1 freq. = 10kHz
   TCNT1 = 0;
   TCCR1A = 0b00000010;
   TCCR1B = 0b00011001;
@@ -83,6 +85,12 @@ void setup_pohyb()
   motor_smer(1, 0);
   motor_smer(2, 0);
   motor_smer(3, 0);
+}
+
+void kick() {
+ digitalWrite(KCK, HIGH);
+ delay(500);
+ digitalWrite(KCK, LOW);
 }
 
 void simple_test_motors()
@@ -216,15 +224,15 @@ ISR(TIMER1_OVF_vect)
   if (t1_tick == r2) digitalWrite(M2_IN1, off2);
   if (t1_tick == r3) digitalWrite(M3_IN1, off3);
   t1_tick++;
-  if (t1_tick >= 20) t1_tick = 0;
+  if (t1_tick >= 200) t1_tick = 0;
 }
 void dolava() {
   kam_ide = IDE_VLAVO;
   motor_speed(ML, 0);
   motor_smer(ML, LFWD);
-  motor_speed(MR, 20);
+  motor_speed(MR, 200);
   motor_smer(MR, RFWD);
-  motor_speed(MB, 20);
+  motor_speed(MB, 200);
   motor_smer(MB, BLT);
 }
 
@@ -232,9 +240,9 @@ void doprava_vzad() {
   kam_ide = IDE_VPRAVO_VZAD;
   motor_speed(ML, 0);
   motor_smer(ML, LBWD);
-  motor_speed(MR, 10);
+  motor_speed(MR, 100);
   motor_smer(MR, RBWD);
-  motor_speed(MB, 10);
+  motor_speed(MB, 100);
   motor_smer(MB, BRT);
 }
 
@@ -242,9 +250,9 @@ void doprava() {
   kam_ide = IDE_ROVNO;
   motor_speed(MR, 0);
   motor_smer(MR, RFWD);
-  motor_speed(ML, 20);
+  motor_speed(ML, 200);
   motor_smer(ML, LFWD);
-  motor_speed(MB, 20);
+  motor_speed(MB, 200);
   motor_smer(MB, BRT);
 }
 
@@ -252,9 +260,9 @@ void dolava_vzad() {
   kam_ide = IDE_VLAVO_VZAD;
   motor_speed(MR, 0);
   motor_smer(MR, RBWD);
-  motor_speed(ML, 10);
+  motor_speed(ML, 100);
   motor_smer(ML, LBWD);
-  motor_speed(MB, 10);
+  motor_speed(MB, 100);
   motor_smer(MB, BLT);
 }
 
@@ -262,11 +270,11 @@ void dokola() {
   kam_ide = TOCI_SA;
   //digitalWrite(13, HIGH);
   motor_smer(MB, BLT);
-  motor_speed(MB, 6);
+  motor_speed(MB, 60);
   motor_smer(MR, RBWD);
-  motor_speed(MR, 6);
+  motor_speed(MR, 60);
   motor_smer(ML, LFWD);
-  motor_speed(ML, 6);
+  motor_speed(ML, 60);
 }
 
 
@@ -275,9 +283,9 @@ void dopredu() {
   motor_smer(MB, BRT);
   motor_speed(MB, 0);
   motor_smer(ML, LFWD);
-  motor_speed(ML, 20);
+  motor_speed(ML, 200);
   motor_smer(MR, RFWD);
-  motor_speed(MR, 20);
+  motor_speed(MR, 200);
 }
 
 void dozadu() {
@@ -285,9 +293,9 @@ void dozadu() {
   motor_smer(MB, BRT);
   motor_speed(MB, 0);
   motor_smer(ML, LBWD);
-  motor_speed(ML, 10);
+  motor_speed(ML, 100);
   motor_smer(MR, RBWD);
-  motor_speed(MR, 10);
+  motor_speed(MR, 100);
 }
 
 
@@ -295,7 +303,7 @@ void zastav() {
   kam_ide = STOJI;
   motor_speed(MB, 0);
   motor_speed(ML, 0);
-  motor_speed(MR, 00);
+  motor_speed(MR, 0);
 }
 
 void obrat_smer()
@@ -313,7 +321,7 @@ void obrat_smer()
 void test_left_motor(int where) {
   if (where == 0) where = LFWD;
   else where = LBWD;
-  motor_speed(ML, 10);
+  motor_speed(ML, 100);
   motor_smer(ML, where);
   motor_speed(MR, 0);
   motor_smer(MR, RBWD);
@@ -324,7 +332,7 @@ void test_left_motor(int where) {
 void test_right_motor(int where) {
   if (where == 0) where = RFWD;
   else where = RBWD;
-  motor_speed(MR, 10);
+  motor_speed(MR, 100);
   motor_smer(MR, where);
   motor_speed(ML, 0);
   motor_smer(ML, RBWD);
@@ -335,7 +343,7 @@ void test_right_motor(int where) {
 void test_back_motor(int where) {
   if (where == 0) where = BLT;
   else where = BRT;
-  motor_speed(MB, 10);
+  motor_speed(MB, 100);
   motor_smer(MB, where);
   motor_speed(MR, 0);
   motor_smer(MR, RBWD);
@@ -343,10 +351,23 @@ void test_back_motor(int where) {
   motor_smer(ML, LFWD);
 }
 
+void vypis_r123()
+{
+  Serial.print("!r123=(");
+  Serial.print(r1);
+  Serial.print(",");
+  Serial.print(r2);
+  Serial.print(",");
+  Serial.print(r3);
+  Serial.println(")");
+    
+}
+
 void segment_f(int where) {  // to the right (where=-90..-60)
   r1 = curr_speed;
   r3 = curr_speed*(-60-where)/60;
   r2 = curr_speed*(where+120)/60;
+  vypis_r123();
   motor_smer(ML, LFWD);
   motor_smer(MR, RBWD);
   motor_smer(MB, BRT);
@@ -356,6 +377,7 @@ void segment_a(int where) {   // to front right (where=-60..0)
   r2 = curr_speed;
   r3 = curr_speed*(where+60)/60;
   r1 = -curr_speed*(where/60);
+  vypis_r123();
   motor_smer(ML, LFWD);
   motor_smer(MR, RFWD);
   motor_smer(MB, BRT);
@@ -365,6 +387,7 @@ void segment_b(int where) {   // to front left (where=0..60)
   r3 = curr_speed;
   r2 = curr_speed*(60-where)/60;
   r1 = curr_speed*where/60;
+  vypis_r123();
   motor_smer(ML, LFWD);
   motor_smer(MR, RFWD);
   motor_smer(MB, BLT);
@@ -374,6 +397,7 @@ void segment_c(int where) {   // to the left (where=60..90)
   r1 = curr_speed;
   r2 = curr_speed*(where-60)/60;
   r3 = curr_speed*(120-where)/60;
+  vypis_r123();
   motor_smer(ML, LBWD);
   motor_smer(MR, RFWD);
   motor_smer(MB, BLT);
