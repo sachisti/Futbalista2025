@@ -35,8 +35,8 @@ void setup_komunikacia()
 
 void spracuj_paket()
 {
-  Serial.print("!p:");
-  Serial.println((char *)(paket));
+  //Serial.print("!p:");
+  //Serial.println((char *)(paket));
   // na tomto mieste mame v poli paket[] prijaty 0-ukonceny retazec znakov
   int a;
   // v tejto ukazke retazec dekodujeme ako cislo a vypiseme spravu s dvojnasobkom
@@ -51,27 +51,23 @@ void spracuj_paket()
   else if (a == 6) dopredu();
   else if (a == 7) doprava(); 
   else if (a == 8) zastav();
-  
+  else if (a == 10) soft_kalibracia();
   else if (a == 31) dolava_vzad();
   else if (a == 32) doprava_vzad();
   else if (a == 33) dozadu();
-  
   else if (a == 90) Serial.print("$zelena je trava\n");
-  
   else if (a == 21) doprava();
   else if (a == 22) dolava();
   else if (a == 23) dopredu();
   else if (a == 24) dokola();
-
   else if (a == 41) test_left_motor(0);
   else if (a == 42) test_right_motor(0);
   else if (a == 43) test_back_motor(0);
-
   else if (a == 51) test_left_motor(1);
   else if (a == 52) test_right_motor(1);
   else if (a == 53) test_back_motor(1);
-
   else if (a == 45) setup_komunikacia();
+  else if (a == 55) kick();
   //else if (a == 46) test_kompas();
   
   

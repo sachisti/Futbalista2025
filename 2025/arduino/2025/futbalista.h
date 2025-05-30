@@ -18,6 +18,7 @@ void dozadu();
 
 void obrat_smer();
 
+void kick();
 
 void simple_test_motors();
 void motor_speed(uint8_t motor, uint8_t speed);
@@ -43,6 +44,7 @@ uint8_t start_on();
 void setup_senzory();
 void test_senzorov();
 int vidi_ciaru();
+void soft_kalibracia();
 
 // kompas
 
