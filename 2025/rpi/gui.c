@@ -21,6 +21,12 @@ static Window win;
 
 static const int GRID_COLS = 10;
 static const int GRID_ROWS = 10;
+static const int HORIZONT = 200;
+
+void horizont() {
+int horizont_line_width = (stride / 4);
+memset(&(data[HORIZONT * horizont_line_width]), 0x66, sirka * 4);
+}
 
 void draw_grid()
 {
