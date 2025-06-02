@@ -10,6 +10,7 @@
 uint8_t headless = 0;
 uint8_t gui = 0;
 int opponent_color = YELLOW;
+extern int zobrazovanie;
 
 //extern void start_camera_thread();
 
@@ -26,6 +27,7 @@ void navod()
 	printf("8 - test zastav\n");
 	printf("9 - test kamery\n");
 	printf("11 - start hry\n");
+	printf("70 - ukazuj veci\n");	
 	printf("80 - koniec\n");
 	printf("90 - test komunikacie\n");
 	printf("31 - Arduino dolava_vzad()\n");
@@ -134,6 +136,7 @@ void hlavny_program()
         fgets(sprava, 5, stdin);
         sscanf(sprava, "%d", &a);
         if (a == 0) navod();
+	    else if (a == 70) { zobrazovanie ^= 1; printf("zobrazenie: %d\n", zobrazovanie); }
 	    else if (a == 9) test_kamery();
 	    else if (a == 10) 
 	    {

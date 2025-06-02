@@ -57,6 +57,8 @@ int vyska = 720; // 480; //1080;
 
 hladane_veci veci;
 int mam_veci = 0;
+
+int zobrazovanie = 1;
  
 int je_vec (uint8_t r, uint8_t g, uint8_t b, int vec)
 {
@@ -120,7 +122,7 @@ int je_vec (uint8_t r, uint8_t g, uint8_t b, int vec)
   
   if (vec == VEC_LOPTA)
   {    
-    if ((h < 35) && (h > 0) && (s > 0.45) && (v > 65)){
+    if (((h < 35) && (h > 0) || (h > 353)) && (s > 0.37) && (v > 65)){      // s > 0.45
       return 1;
     }
   }
@@ -193,6 +195,8 @@ void najdi_veci_v_obraze(uint8_t *RGB)
       uint8_t *buffer = RGB;
       uint8_t *p = (uint8_t *)buffer;
 
+      if (gui & !zobrazovanie) gui_putimage(buffer);
+      
       // prechadzame cely obrazok bod po bode...
       // na tomto mieste chcete program upravit podla svojich potrieb...
 
@@ -298,8 +302,16 @@ void najdi_veci_v_obraze(uint8_t *RGB)
       veci.riadok_modrej_branky = doteraz_najv_riadok[VEC_MODRA_BRANKA];
       veci.stlpec_modrej_branky = doteraz_najv_stlpec[VEC_MODRA_BRANKA];
       
+      for (int i = -1; i < 2; i++)
+        for (int j = -1; j < 2; j++)
+        {
+          int pos = (veci.riadok_lopty + i) * 3 * sirka + (veci.stlpec_lopty + j) * 3;
+          buffer[pos] = 0;
+          buffer[pos + 1] = 0;
+          buffer[pos + 2] = 0;
+        }
       mam_veci = 1;
-      if (gui) gui_putimage(buffer);
+      if (gui & zobrazovanie) gui_putimage(buffer);
 
       //static int iter = 0;
       
