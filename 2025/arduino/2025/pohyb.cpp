@@ -379,7 +379,7 @@ void segment_f(int where) {  // to the right (where=-90..-60)
 void segment_a(int where) {   // to front right (where=-60..0)
   r2 = curr_speed;
   r3 = curr_speed*(where+60)/60;
-  r1 = -curr_speed*(where/60);
+  r1 = curr_speed*(-where)/60;
   vypis_r123();
   motor_smer(ML, LFWD);
   motor_smer(MR, RFWD);

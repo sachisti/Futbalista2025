@@ -88,6 +88,7 @@ int hra()
 	     if ((opponent_color == YELLOW) && (veci.velkost_modrej_branky > 50))
 	        je_pred_nami_nasa_branka =1;
 	   
+	   /*
 	     if (!veci.stlpec_lopty) posli_nevidi_loptu();
          else if (veci.velkost_lopty < 10) continue;
          else if (veci.stlpec_lopty < sirka / 3) posli_lopta_vpravo();
@@ -96,7 +97,20 @@ int hra()
 	        if (je_pred_nami_nasa_branka) posli_nevidi_loptu();
 	        else posli_lopta_vstrede();
 	     } else posli_lopta_vlavo();
+	*/
 	
+	if (!veci.stlpec_lopty) posli_nevidi_loptu();
+	else
+	{
+	    int bunka_riadok = veci.riadok_lopty / 72;
+        int bunka_stlpec = veci.stlpec_lopty / 128;
+        int uhol_lopta = uhol[bunka_riadok][bunka_stlpec];
+        int uhol_smer = uhol_lopta / 2 + 97;
+	    uint8_t paket_smer[10];
+	    sprintf(paket_smer, "%d", uhol_smer);
+	    zapis_paket_do_arduina(paket_smer);
+    }
+
 	     iter++;
 	     if (iter % 100 == 0)
 	         zaloguj_n("hra() iter", iter);
