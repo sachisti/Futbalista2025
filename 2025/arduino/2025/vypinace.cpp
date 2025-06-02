@@ -28,17 +28,13 @@ void test_vypinace()
   {
     if (digitalRead(START_SWITCH) == 0)
     {
-//      digitalWrite(13, HIGH);
-      delay(200);
-//      digitalWrite(13, LOW);
-      delay(200);
+  Serial.println('start switch on');
+  delay(500);
     }
     if (digitalRead(CONFIG_SWITCH) == 0)
     {
-//      digitalWrite(13, HIGH);
-      delay(400);
-//      digitalWrite(13, LOW);
-      delay(400);
+  Serial.println('config switch on');
+  delay(500);
     }
   }
 }
