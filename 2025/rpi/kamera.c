@@ -190,7 +190,6 @@ int fill(uint8_t *buffer, int riadok, int stlpec, int vec)
 //camera callback
 void najdi_veci_v_obraze(uint8_t *RGB)
 {
-
       uint8_t *buffer = RGB;
       uint8_t *p = (uint8_t *)buffer;
 

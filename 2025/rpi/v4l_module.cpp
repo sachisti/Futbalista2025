@@ -156,9 +156,9 @@ int process_frames(int fd)
 
       uint8_t *p = (uint8_t *)buffer;
       frame_callback(p);
-      //printf("poc=%d\n", pocitadlo++);
       
     } 
+    printf("process_frames() terminates\n");
     return 0;
 }
  

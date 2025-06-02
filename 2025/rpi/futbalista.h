@@ -21,6 +21,8 @@ typedef struct veci_str {
 extern hladane_veci veci;
 extern int mam_veci;
 
+extern uint8_t uhol[10][10];
+
 // komunikacia 
 
 void setup_komunikacia();

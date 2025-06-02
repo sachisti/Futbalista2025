@@ -55,7 +55,7 @@ void gui_putimage(uint8_t *img)
     int data_line_width = (stride / 4);
     for (int y = 0; y < vyska; y++) {
         for (int x = 0; x < sirka; x++) {
-            int ofs = (vyska - y - 1) * line_width + (sirka - x - 1) * 3;
+            int ofs = y * line_width + (sirka - x - 1) * 3;
             uint8_t b = img[ofs];
             uint8_t g = img[ofs + 1];
             uint8_t r = img[ofs + 2];
@@ -63,8 +63,7 @@ void gui_putimage(uint8_t *img)
         }
     }
     
-    draw_grid();
-    
+    draw_grid();   
     XClearArea(dpy, win, 0, 0, 0, 0, True);
 }
 
