@@ -18,8 +18,8 @@ typedef struct veci_str {
    int sirka_modrej_branky, vyska_modrej_branky, velkost_modrej_branky, riadok_modrej_branky, stlpec_modrej_branky;
 } hladane_veci;
 
-extern hladane_veci veci;
-extern int mam_veci;
+extern volatile hladane_veci veci;
+extern volatile int mam_veci;
 
 extern uint8_t uhol[10][10];
 

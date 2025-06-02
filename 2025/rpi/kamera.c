@@ -55,10 +55,10 @@ uint8_t farba_veci[3][3] = { { 70, 255, 70 }, { 70, 70, 200}, {200, 200, 70 } };
 int sirka = 1280; // 640; //1920;
 int vyska = 720; // 480; //1080;
 
-hladane_veci veci;
-int mam_veci = 0;
+volatile hladane_veci veci;
+volatile int mam_veci = 0;
 
-int zobrazovanie = 1;
+volatile int zobrazovanie = 1;
  
 int je_vec (uint8_t r, uint8_t g, uint8_t b, int vec)
 {
@@ -200,6 +200,7 @@ void najdi_veci_v_obraze(uint8_t *RGB)
       // prechadzame cely obrazok bod po bode...
       // na tomto mieste chcete program upravit podla svojich potrieb...
 
+      int preskoc_riadky = vyska * 3 / 10;
       // najskor vynulujeme vsetky 4 okraje, aby fill nevybehol mimo rozsah pola
       for (int i = 0; i < vyska; i++)
       {
@@ -234,7 +235,9 @@ void najdi_veci_v_obraze(uint8_t *RGB)
       int doteraz_najv_riadok[3] = { 0, 0, 0 };
       int doteraz_najv_stlpec[3] = { 0, 0, 0 };
       
-      for (int i = 0; i < vyska * VYSKA_OBRAZU; i++)
+      p += preskoc_riadky * sirka * 3;
+
+      for (int i = preskoc_riadky; i < vyska * VYSKA_OBRAZU; i++)
         for (int j = 0; j < sirka; j++)
         {
   	      uint8_t b = *(p++);
@@ -302,14 +305,17 @@ void najdi_veci_v_obraze(uint8_t *RGB)
       veci.riadok_modrej_branky = doteraz_najv_riadok[VEC_MODRA_BRANKA];
       veci.stlpec_modrej_branky = doteraz_najv_stlpec[VEC_MODRA_BRANKA];
       
-      for (int i = -1; i < 2; i++)
-        for (int j = -1; j < 2; j++)
-        {
-          int pos = (veci.riadok_lopty + i) * 3 * sirka + (veci.stlpec_lopty + j) * 3;
-          buffer[pos] = 0;
-          buffer[pos + 1] = 0;
-          buffer[pos + 2] = 0;
-        }
+      if (veci.riadok_lopty > 0)
+      {
+        for (int i = -1; i < 2; i++)
+          for (int j = -1; j < 2; j++)
+          {
+            int pos = (veci.riadok_lopty + i) * 3 * sirka + (veci.stlpec_lopty + j) * 3;
+            buffer[pos] = 0;
+            buffer[pos + 1] = 0;
+            buffer[pos + 2] = 0;
+          }
+      }
       mam_veci = 1;
       if (gui & zobrazovanie) gui_putimage(buffer);
 
