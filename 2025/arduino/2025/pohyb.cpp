@@ -43,7 +43,7 @@ volatile uint8_t on1, off1, on2, off2, on3, off3;
 
 static uint8_t kam_ide = STOJI;
 
-static uint8_t curr_speed = 100;   // 0..20
+static uint8_t curr_speed = 30;   // 0..20
 
 void setup_pohyb()
 {
@@ -273,11 +273,11 @@ void dokola() {
   kam_ide = TOCI_SA;
   //digitalWrite(13, HIGH);
   motor_smer(MB, BLT);
-  motor_speed(MB, 60);
+  motor_speed(MB, 30);
   motor_smer(MR, RBWD);
-  motor_speed(MR, 60);
+  motor_speed(MR, 30);
   motor_smer(ML, LFWD);
-  motor_speed(ML, 60);
+  motor_speed(ML, 30);
 }
 
 
