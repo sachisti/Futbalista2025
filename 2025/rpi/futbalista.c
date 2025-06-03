@@ -71,9 +71,9 @@ void posli_nevidi_loptu()
 {
     char *s = "24";    
     zapis_paket_do_arduina((uint8_t *)s);
-    printf("0");
 }
 
+char logstr[1000];
 
 int hra()
 {
@@ -103,26 +103,59 @@ int hra()
 	     } else posli_lopta_vlavo();
 	*/
 	
-	if (!veci.stlpec_lopty) posli_nevidi_loptu();
+	if (!veci.stlpec_lopty) 
+	{
+	    posli_nevidi_loptu();
+	    iter++;
+	    if (iter % 100 == 0)
+	    { 
+	     sprintf(logstr, "back:%d,ball=none -> search", je_pred_nami_nasa_branka);
+	     zaloguj(logstr);
+	     //zaloguj_n("hra() iter", iter);
+	    }
+	}
 	else
 	{
 	    int bunka_riadok = veci.riadok_lopty / 72;
             int bunka_stlpec = veci.stlpec_lopty / 128;
             int uhol_lopta = uhol[bunka_riadok][bunka_stlpec];
-	    if (uhol_lopta == -1) posli_nevidi_loptu();
+	    if (uhol_lopta == -1) 
+	    {
+		posli_nevidi_loptu();
+		iter++;
+	        if (iter % 100 == 0)
+	        { 
+		 sprintf(logstr, "back:%d,ball=[%d,%d,%d],yg=[%d,%d,%d],bg=[%d,%d,%d],balldir=%d -> search", je_pred_nami_nasa_branka, 
+			  veci.stlpec_lopty, veci.riadok_lopty, veci.velkost_lopty,
+			  veci.stlpec_zltej_branky, veci.riadok_zltej_branky, veci.velkost_zltej_branky,
+			  veci.stlpec_modrej_branky, veci.riadok_modrej_branky, veci.velkost_modrej_branky,
+			  uhol_lopta);
+	         zaloguj(logstr);
+		 //zaloguj_n("hra() iter", iter);
+	        }
+	    }
 	    else
 	    {
               int uhol_smer = (180 - uhol_lopta) / 2 + 97;
 	      uint8_t paket_smer[10];
 	      sprintf(paket_smer, "%d", uhol_smer);
 	      zapis_paket_do_arduina(paket_smer);
+	      iter++;
+	      if (iter % 100 == 0)
+	      { 
+		 sprintf(logstr, "back:%d,ball=[%d,%d,%d],yg=[%d,%d,%d],bg=[%d,%d,%d],balldir=%d -> %d", je_pred_nami_nasa_branka, 
+		          veci.stlpec_lopty, veci.riadok_lopty, veci.velkost_lopty,
+			  veci.stlpec_zltej_branky, veci.riadok_zltej_branky, veci.velkost_zltej_branky,
+			  veci.stlpec_modrej_branky, veci.riadok_modrej_branky, veci.velkost_modrej_branky,
+			  uhol_lopta, uhol_smer);
+	         zaloguj(logstr);
+	         //zaloguj_n("hra() iter", iter);
+	      }     
 	    }
         }
 
-	     iter++;
-	     if (iter % 100 == 0)
-	         zaloguj_n("hra() iter", iter);
 
+    usleep(10000);
     } while (1);
     
     return 0;
