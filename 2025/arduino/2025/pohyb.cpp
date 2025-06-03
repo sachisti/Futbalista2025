@@ -43,7 +43,7 @@ volatile uint8_t on1, off1, on2, off2, on3, off3;
 
 static uint8_t kam_ide = STOJI;
 
-static uint8_t curr_speed = 30;   // 0..20
+static uint8_t curr_speed = 40;   // 0..200
 
 void setup_pohyb()
 {
@@ -233,9 +233,9 @@ void dolava() {
   kam_ide = IDE_VLAVO;
   motor_speed(ML, 0);
   motor_smer(ML, LFWD);
-  motor_speed(MR, 200);
+  motor_speed(MR, curr_speed);
   motor_smer(MR, RFWD);
-  motor_speed(MB, 200);
+  motor_speed(MB, curr_speed);
   motor_smer(MB, BLT);
 }
 
@@ -243,9 +243,9 @@ void doprava_vzad() {
   kam_ide = IDE_VPRAVO_VZAD;
   motor_speed(ML, 0);
   motor_smer(ML, LBWD);
-  motor_speed(MR, 100);
+  motor_speed(MR, curr_speed);
   motor_smer(MR, RBWD);
-  motor_speed(MB, 100);
+  motor_speed(MB, curr_speed);
   motor_smer(MB, BRT);
 }
 
@@ -253,9 +253,9 @@ void doprava() {
   kam_ide = IDE_ROVNO;
   motor_speed(MR, 0);
   motor_smer(MR, RFWD);
-  motor_speed(ML, 200);
+  motor_speed(ML, curr_speed);
   motor_smer(ML, LFWD);
-  motor_speed(MB, 200);
+  motor_speed(MB, curr_speed);
   motor_smer(MB, BRT);
 }
 
@@ -263,9 +263,9 @@ void dolava_vzad() {
   kam_ide = IDE_VLAVO_VZAD;
   motor_speed(MR, 0);
   motor_smer(MR, RBWD);
-  motor_speed(ML, 100);
+  motor_speed(ML, curr_speed);
   motor_smer(ML, LBWD);
-  motor_speed(MB, 100);
+  motor_speed(MB, curr_speed);
   motor_smer(MB, BLT);
 }
 
@@ -273,11 +273,11 @@ void dokola() {
   kam_ide = TOCI_SA;
   //digitalWrite(13, HIGH);
   motor_smer(MB, BLT);
-  motor_speed(MB, 30);
+  motor_speed(MB, curr_speed);
   motor_smer(MR, RBWD);
-  motor_speed(MR, 30);
+  motor_speed(MR, curr_speed);
   motor_smer(ML, LFWD);
-  motor_speed(ML, 30);
+  motor_speed(ML, curr_speed);
 }
 
 
@@ -286,9 +286,9 @@ void dopredu() {
   motor_smer(MB, BRT);
   motor_speed(MB, 0);
   motor_smer(ML, LFWD);
-  motor_speed(ML, 200);
+  motor_speed(ML, curr_speed);
   motor_smer(MR, RFWD);
-  motor_speed(MR, 200);
+  motor_speed(MR, curr_speed);
 }
 
 void dozadu() {
@@ -296,9 +296,9 @@ void dozadu() {
   motor_smer(MB, BRT);
   motor_speed(MB, 0);
   motor_smer(ML, LBWD);
-  motor_speed(ML, 100);
+  motor_speed(ML, curr_speed);
   motor_smer(MR, RBWD);
-  motor_speed(MR, 100);
+  motor_speed(MR, curr_speed);
 }
 
 

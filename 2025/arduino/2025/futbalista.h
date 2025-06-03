@@ -34,6 +34,7 @@ void usmerneny_pohyb(int where);
 
 // vypinace
 
+void bezpecnostny_vypinac();
 void setup_vypinace();
 void test_vypinace();
 uint8_t config_on();

@@ -17,10 +17,9 @@ void loop()
 {
 
   komunikacia();
-  
   strategia();
   kontrola_senzorov();
-  
+  // bezpecnostny_vypinac();
   if (start_on())
   {   
     zastav();

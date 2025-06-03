@@ -4,6 +4,15 @@
 #define START_SWITCH 11
 #define CONFIG_SWITCH 12
 
+void bezpecnostny_vypinac() {
+    if (digitalRead(START_SWITCH) == 0)
+    {
+      zastav();
+      Serial.println('motor trig');
+      delay(200);
+    }
+}
+
 void setup_vypinace()
 {
   pinMode(CONFIG_SWITCH, INPUT);
@@ -11,6 +20,7 @@ void setup_vypinace()
   digitalWrite(CONFIG_SWITCH, HIGH);  // config pull-up
   digitalWrite(START_SWITCH, HIGH); // config pull-up
 }
+
 
 uint8_t config_on()
 {
