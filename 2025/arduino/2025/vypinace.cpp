@@ -8,7 +8,7 @@ void bezpecnostny_vypinac() {
     if (digitalRead(START_SWITCH) == 0)
     {
       zastav();
-      Serial.println('motor trig');
+  //    Serial.println("motor trig");
       delay(200);
     }
 }
@@ -38,12 +38,12 @@ void test_vypinace()
   {
     if (digitalRead(START_SWITCH) == 0)
     {
-  Serial.println('start switch on');
+//  Serial.println("start switch on");
   delay(500);
     }
     if (digitalRead(CONFIG_SWITCH) == 0)
     {
-  Serial.println('config switch on');
+//  Serial.println("config switch on");
   delay(500);
     }
   }
