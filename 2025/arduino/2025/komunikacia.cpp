@@ -26,6 +26,11 @@ void setup_komunikacia()
   Serial.write('^');
 }
 
+void start_again()
+{
+  setup_pohyb();
+  setup_komunikacia();
+}
 
 //spravy RPI -> Arduino:
 //  21 - lopta vpravo
@@ -67,7 +72,7 @@ void spracuj_paket()
   else if (a == 51) test_left_motor(1);
   else if (a == 52) test_right_motor(1);
   else if (a == 53) test_back_motor(1);
-  else if (a == 45) setup_komunikacia();
+  else if (a == 45) start_again(); 
   else if (a == 55) kick();
   //else if (a == 46) test_kompas();
   
