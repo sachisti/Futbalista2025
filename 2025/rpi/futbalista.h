@@ -5,6 +5,7 @@
 
 #define YELLOW 1
 #define BLUE 2
+#define ROBOT1
 
 extern int opponent_color;
 extern int sirka;
