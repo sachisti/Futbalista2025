@@ -4,12 +4,16 @@
 #define START_SWITCH 11
 #define CONFIG_SWITCH 12
 
+extern volatile uint8_t r1, r2, r3;
+
 void bezpecnostny_vypinac() {
     if (digitalRead(START_SWITCH) == 0)
     {
+      r1 = r2 = r3 = 0;
       zastav();
-      Serial.println('motor trig');
-      delay(200);
+      while (digitalRead(START_SWITCH) == 0) {      
+        r1 = r2 = r3 = 0;
+      }
     }
 }
 
