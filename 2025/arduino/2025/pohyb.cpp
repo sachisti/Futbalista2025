@@ -38,12 +38,19 @@
 #define CAS_OBRAT_SMER 500 //cas na ktory pojde robot do opacneho smeru
 
 volatile uint8_t r1, r2, r3;
+volatile uint8_t r1_adjusted, r2_adjusted, r3_adjusted;
+volatile uint8_t adjusting = 0;
+volatile int direction_correction;
+
 volatile uint8_t t1_tick;
 volatile uint8_t on1, off1, on2, off2, on3, off3;
 
 static uint8_t kam_ide = STOJI;
 
+static uint8_t max_speed = 200;
 static uint8_t curr_speed = 40;   // 0..200
+
+static uint8_t smer_motora[4];
 
 void setup_pohyb()
 {
@@ -96,6 +103,74 @@ void kick() {
   }
 }
 
+void adjust_based_on_compass()
+{
+  if (!adjusting) return;
+  
+  if (smer_motora[MB] == BRT) // back is going right (BRT)
+  {
+     if (r1 > direction_correction) 
+     {
+       if (r1 - direction_correction > max_speed)
+         r1_adjusted = max_speed;
+       else r1_adjusted = r1 - direction_correction;
+     }
+     else r1_adjusted = 0;   
+  }
+  else 
+  {
+     if (r1 + direction_correction >= 0) 
+     {
+       if (r1 + direction_correction > max_speed)
+         r1_adjusted = max_speed;
+       else r1_adjusted = r1 + direction_correction;
+     }
+     else r1_adjusted = 0;
+  }
+
+  if (smer_motora[ML] == LBWD) // left is going backward (LBWD)
+  {
+     if (r2 > direction_correction) 
+     {
+       if (r2 - direction_correction > max_speed)
+         r2_adjusted = max_speed;
+       else r2_adjusted = r2 - direction_correction;
+     }
+     else r2_adjusted = 0;   
+  }
+  else 
+  {
+     if (r2 + direction_correction >= 0) 
+     {
+       if (r2 + direction_correction > max_speed)
+         r2_adjusted = max_speed;
+       else r2_adjusted = r2 + direction_correction;
+     }
+     else r2_adjusted = 0;
+  }
+
+  if (smer_motora[MR] == RFWD) // left is going backward (LBWD)
+  {
+     if (r3 > direction_correction) 
+     {
+       if (r3 - direction_correction > max_speed)
+         r3_adjusted = max_speed;
+       else r3_adjusted = r3 - direction_correction;
+     }
+     else r3_adjusted = 0;   
+  }
+  else 
+  {
+     if (r3 + direction_correction >= 0) 
+     {
+       if (r3 + direction_correction > max_speed)
+         r3_adjusted = max_speed;
+       else r3_adjusted = r3 + direction_correction;
+     }
+     else r3_adjusted = 0;
+  }
+}
+
 void simple_test_motors()
 {
   //Serial.println("simple motor test");
@@ -131,6 +206,7 @@ void motor_smer(uint8_t motor, uint8_t smer)
     case 2: digitalWrite(M2_IN2, smer); off2 = smer; on2 = 1 - smer; break;
     case 3: digitalWrite(M3_IN2, smer); off3 = smer; on3 = 1 - smer; break;
   }
+  smer_motora[motor] = smer;
 }
 
 void test_motors2()
@@ -223,12 +299,13 @@ ISR(TIMER1_OVF_vect)
     digitalWrite(M2_IN1, on2);
     digitalWrite(M3_IN1, on3);
   }
-  if (t1_tick == r1) digitalWrite(M1_IN1, off1);
-  if (t1_tick == r2) digitalWrite(M2_IN1, off2);
-  if (t1_tick == r3) digitalWrite(M3_IN1, off3);
+  if (t1_tick == r1_adjusted) digitalWrite(M1_IN1, off1);
+  if (t1_tick == r2_adjusted) digitalWrite(M2_IN1, off2);
+  if (t1_tick == r3_adjusted) digitalWrite(M3_IN1, off3);
   t1_tick++;
-  if (t1_tick >= 200) t1_tick = 0;
+  if (t1_tick >= max_speed) t1_tick = 0;
 }
+
 void dolava() {
   kam_ide = IDE_VLAVO;
   motor_speed(ML, 0);
@@ -270,6 +347,7 @@ void dolava_vzad() {
 }
 
 void dokola() {
+  adjusting = 0;
   kam_ide = TOCI_SA;
   //digitalWrite(13, HIGH);
   motor_smer(MB, BLT);
@@ -367,9 +445,9 @@ void vypis_r123()
 }
 
 void segment_f(int where) {  // to the right (where=-90..-60)
-  r1 = curr_speed;
-  r3 = curr_speed*(-60-where)/60;
-  r2 = curr_speed*(where+120)/60;
+  r1_adjusted = r1 = curr_speed;
+  r3_adjusted = r3 = curr_speed*(-60-where)/60;
+  r2_adjusted = r2 = curr_speed*(where+120)/60;
   vypis_r123();
   motor_smer(ML, LFWD);
   motor_smer(MR, RBWD);
@@ -377,9 +455,9 @@ void segment_f(int where) {  // to the right (where=-90..-60)
 }
 
 void segment_a(int where) {   // to front right (where=-60..0)
-  r2 = curr_speed;
-  r3 = curr_speed*(where+60)/60;
-  r1 = curr_speed*(-where)/60;
+  r2_adjusted = r2 = curr_speed;
+  r3_adjusted = r3 = curr_speed*(where+60)/60;
+  r1_adjusted = r1 = curr_speed*(-where)/60;
   vypis_r123();
   motor_smer(ML, LFWD);
   motor_smer(MR, RFWD);
@@ -387,9 +465,9 @@ void segment_a(int where) {   // to front right (where=-60..0)
 }
 
 void segment_b(int where) {   // to front left (where=0..60)
-  r3 = curr_speed;
-  r2 = curr_speed*(60-where)/60;
-  r1 = curr_speed*where/60;
+  r3_adjusted = r3 = curr_speed;
+  r2_adjusted = r2 = curr_speed*(60-where)/60;
+  r1_adjusted = r1 = curr_speed*where/60;
   vypis_r123();
   motor_smer(ML, LFWD);
   motor_smer(MR, RFWD);
@@ -397,9 +475,9 @@ void segment_b(int where) {   // to front left (where=0..60)
 }
 
 void segment_c(int where) {   // to the left (where=60..90)
-  r1 = curr_speed;
-  r2 = curr_speed*(where-60)/60;
-  r3 = curr_speed*(120-where)/60;
+  r1_adjusted = r1 = curr_speed;
+  r2_adjusted = r2 = curr_speed*(where-60)/60;
+  r3_adjusted = r3 = curr_speed*(120-where)/60;
   vypis_r123();
   motor_smer(ML, LBWD);
   motor_smer(MR, RFWD);
@@ -407,6 +485,7 @@ void segment_c(int where) {   // to the left (where=60..90)
 }
 
 void usmerneny_pohyb(int where) {
+  adjusting = 1;
   where *= 2;    // resolution 2 degrees / unit, scale back to degrees
   where -= 90;   // convert from 0..180 to -90 to 90
   // currently only segments in forward 180 degrees directions are covered

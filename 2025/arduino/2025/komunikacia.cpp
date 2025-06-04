@@ -52,6 +52,7 @@ void spracuj_paket()
   else if (a == 7) doprava(); 
   else if (a == 8) zastav();
   else if (a == 12) soft_kalibracia();
+  else if (a == 15) test_kompas();
   else if (a == 31) dolava_vzad();
   else if (a == 32) doprava_vzad();
   else if (a == 33) dozadu();

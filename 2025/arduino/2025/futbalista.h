@@ -31,6 +31,7 @@ void test_right_motor(int where);
 void test_back_motor(int where);
 
 void usmerneny_pohyb(int where);
+void adjust_based_on_compass();
 
 // vypinace
 
@@ -52,6 +53,7 @@ void soft_kalibracia();
 void setup_kompas();
 int kompas();
 void test_kompas();
+void read_kompas();
 
 // komunikacia
 

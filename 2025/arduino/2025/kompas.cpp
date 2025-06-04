@@ -1,45 +1,48 @@
-
-#include <Adafruit_BMP085.h>
-#include <HMC5883L_Simple.h>
-#include <MPU6050.h>
-
-
+#include <QMC5883LCompass.h>
 #include <Arduino.h>
 #include "futbalista.h"
 
-MPU6050 accelgyro;
-Adafruit_BMP085 bmp;
-HMC5883L_Simple Compass;
+QMC5883LCompass compass;
 
-void setup_kompas()
-{
-  Wire.begin();
-  // initialize devices
-  Serial.println("$I2Cini");
-
-  // initialize bmp085
-  if (!bmp.begin()) {
-    Serial.println("$BMPerr");
-    while (1) {}
-  }
-
-  delay(20);
-  // initialize mpu6050
-  accelgyro.initialize();
-  Serial.println(accelgyro.testConnection() ? "$MPUok" : "$MPUfail");
-  accelgyro.setI2CBypassEnabled(true); // set bypass mode for gateway to hmc5883L
-  
-  
-  // initialize hmc5883l
-  Compass.SetDeclination(8, 27, 'E');
-  Compass.SetSamplingMode(COMPASS_SINGLE);
-  Compass.SetScale(COMPASS_SCALE_130);
-  Compass.SetOrientation(COMPASS_HORIZONTAL_X_NORTH);
-}
+static int opponent_dir;
+extern volatile int direction_correction;
 
 int kompas()
 {
-   return (int) Compass.GetHeadingDegrees();
+   compass.read();
+   int a = compass.getAzimuth() - opponent_dir;
+   if (a > 180) a -= 360;
+   else if (a < -180) a += 360;
+   return a;
+}
+
+void setup_kompas()
+{
+  compass.init();
+  compass.setMagneticDeclination(3, 20);  // BARI 3deg 20minutes
+  opponent_dir = kompas();
+
+
+//  // initialize hmc5883l
+//  Compass.SetDeclination(8, 27, 'E');
+//  Compass.SetSamplingMode(COMPASS_SINGLE);
+//  Compass.SetScale(COMPASS_SCALE_130);
+//  Compass.SetOrientation(COMPASS_HORIZONTAL_X_NORTH);
+}
+
+int bitwidth(int i)
+{
+  int rv = 0;
+  while (i) { rv++; i >>= 1; }
+  return rv;
+}
+
+void read_kompas()
+{
+  int a = kompas();
+  if (a < 0) direction_correction = -bitwidth(a);
+  else direction_correction = bitwidth(a);
+  adjust_based_on_compass();
 }
 
 void test_kompas()
