@@ -105,7 +105,17 @@ void kick() {
 
 void adjust_based_on_compass()
 {
-  if (!adjusting) return;
+  //Serial.println("adjust:");
+  if (!adjusting) 
+  {
+    //Serial.println("not!");
+    return;
+  }
+
+  Serial.print("r1=");Serial.println(r1);
+  Serial.print("r2=");Serial.println(r2);
+  Serial.print("r3=");Serial.println(r3);
+  Serial.print("corr=");Serial.println(direction_correction);
   
   if (smer_motora[MB] == BRT) // back is going right (BRT)
   {
@@ -169,6 +179,10 @@ void adjust_based_on_compass()
      }
      else r3_adjusted = 0;
   }
+    Serial.print("ar1=");Serial.println(r1_adjusted);
+  Serial.print("ar2=");Serial.println(r2_adjusted);
+  Serial.print("ar3=");Serial.println(r3_adjusted);
+
 }
 
 void simple_test_motors()
@@ -192,9 +206,9 @@ void motor_speed(uint8_t motor, uint8_t speed)
 {
   switch (motor)
   {
-    case 1: r1 = speed; break;
-    case 2: r2 = speed; break;
-    case 3: r3 = speed; break;
+    case 1: r1_adjusted = r1 = speed; break;
+    case 2: r2_adjusted = r2 = speed; break;
+    case 3: r3_adjusted = r3 = speed; break;
   }
 }
 

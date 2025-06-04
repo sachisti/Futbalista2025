@@ -15,14 +15,19 @@ void setup()
 
 void loop()
 {
+  Serial.print(".");
   read_kompas();
+   Serial.print("-");
   komunikacia();
+  Serial.print(",");
   strategia();
+  Serial.print(":");
   kontrola_senzorov();
-  bezpecnostny_vypinac();
+  //bezpecnostny_vypinac();
   if (start_on())
   {   
     zastav();
+    Serial.println("!emergencystop");
     while (start_on());
   }
 

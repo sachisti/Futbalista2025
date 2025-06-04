@@ -7,13 +7,22 @@ QMC5883LCompass compass;
 static int opponent_dir;
 extern volatile int direction_correction;
 
+const int COMPASS_READ_FREQUENCY = 70;
+
+int last_a;
+int iter_compass = 0;
+
 int kompas()
 {
-   compass.read();
-   int a = compass.getAzimuth() - opponent_dir;
-   if (a > 180) a -= 360;
-   else if (a < -180) a += 360;
-   return a;
+   if (iter_compass++ == COMPASS_READ_FREQUENCY)
+   {
+     compass.read();
+     last_a = compass.getAzimuth() - opponent_dir;
+     if (last_a > 180) last_a -= 360;
+     else if (last_a < -180) last_a += 360;
+     iter_compass = 0;
+   }
+   return last_a;
 }
 
 void setup_kompas()
@@ -40,9 +49,9 @@ int bitwidth(int i)
 void read_kompas()
 {
   int a = kompas();
-  if (a < 0) direction_correction = -bitwidth(a);
-  else direction_correction = bitwidth(a);
-  adjust_based_on_compass();
+  //if (a < 0) direction_correction = -bitwidth(-a);
+  //else direction_correction = bitwidth(a);
+  //adjust_based_on_compass();
 }
 
 void test_kompas()

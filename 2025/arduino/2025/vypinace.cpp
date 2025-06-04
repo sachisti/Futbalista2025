@@ -7,11 +7,11 @@
 extern volatile uint8_t r1, r2, r3;
 
 void bezpecnostny_vypinac() {
-    if (digitalRead(START_SWITCH) == 0)
+    if (digitalRead(START_SWITCH) == 1)
     {
       r1 = r2 = r3 = 0;
       zastav();
-      while (digitalRead(START_SWITCH) == 0) {      
+      while (digitalRead(START_SWITCH) == 1) {      
         r1 = r2 = r3 = 0;
       }
     }
