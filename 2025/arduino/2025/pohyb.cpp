@@ -78,7 +78,7 @@ volatile uint8_t on1, off1, on2, off2, on3, off3;
 static uint8_t kam_ide = STOJI;
 
 static uint8_t max_speed = 200;
-static uint8_t curr_speed = 100;   // 0..200
+static uint8_t curr_speed = 110;   // 0..200
 
 static uint8_t smer_motora[4];
 
@@ -397,11 +397,11 @@ void dokola() {
   kam_ide = TOCI_SA;
   //digitalWrite(13, HIGH);
   motor_smer(MB, BLT);
-  motor_speed(MB, curr_speed/5);
+  motor_speed(MB, curr_speed/4);
   motor_smer(MR, RBWD);
-  motor_speed(MR, curr_speed/5);
+  motor_speed(MR, curr_speed/4);
   motor_smer(ML, LFWD);
-  motor_speed(ML, curr_speed/5);
+  motor_speed(ML, curr_speed/4);
 }
 
 
