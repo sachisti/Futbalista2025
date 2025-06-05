@@ -56,6 +56,11 @@ void read_kompas()
 
 void test_kompas()
 {
-   Serial.print("$");
-   Serial.println(kompas());
+   for (int i = 0; i < 200; i++)
+   {
+     Serial.print("$");
+     Serial.println(kompas());
+     if (Serial.available()) { Serial.read(); break; }
+     delay(150);
+   }
 }

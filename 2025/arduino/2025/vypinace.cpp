@@ -61,7 +61,7 @@ uint8_t config_on()
     return 0;
   }
 
-  if (config_state == 3)
+  if (config_state == 2)
   {
     if (digitalRead(CONFIG_SWITCH) == 1)
     {

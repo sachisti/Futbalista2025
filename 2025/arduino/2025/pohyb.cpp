@@ -5,25 +5,55 @@
 #define M1_IN1 4
 #define M1_IN2 5
 
+#ifdef ROBOT1
+
 #define M2_IN1 6
 #define M2_IN2 7
 
 #define M3_IN1 8
 #define M3_IN2 9
 
-// 1 - back
-// 2 - right
-// 3 - left
+#else
+
+#define M3_IN1 6
+#define M3_IN2 7
+
+#define M2_IN1 8
+#define M2_IN2 9
+
+#endif
+
+
 #define ML  2
 #define MR  3
 #define MB  1
 
+#ifdef ROBOT1
+
 #define LFWD 0
 #define LBWD 1
+
+#else
+
+#define LFWD 1
+#define LBWD 0
+
+#endif
+
 #define RFWD 0
 #define RBWD 1
+
+#ifdef ROBOT1
+
 #define BRT  1
 #define BLT  0
+
+#else
+
+#define BRT  0
+#define BLT  1
+
+#endif
 
 // kam ide
 #define IDE_VPRAVO       1
@@ -367,11 +397,11 @@ void dokola() {
   kam_ide = TOCI_SA;
   //digitalWrite(13, HIGH);
   motor_smer(MB, BLT);
-  motor_speed(MB, curr_speed/3);
+  motor_speed(MB, curr_speed/5);
   motor_smer(MR, RBWD);
-  motor_speed(MR, curr_speed/3);
+  motor_speed(MR, curr_speed/5);
   motor_smer(ML, LFWD);
-  motor_speed(ML, curr_speed/3);
+  motor_speed(ML, curr_speed/5);
 }
 
 

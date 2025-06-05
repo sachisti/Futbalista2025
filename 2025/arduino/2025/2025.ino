@@ -7,6 +7,7 @@ void setup()
 
   setup_vypinace();
   setup_pohyb();
+  delay(1000);
   setup_senzory();
   setup_kompas();
   setup_strategia();

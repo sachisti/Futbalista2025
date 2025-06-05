@@ -19,7 +19,7 @@
 #define MAX_DLZKA_PAKETU 1000
 
 // na nasledujucom riadku mozno treba upravit zariadenie:
-#ifdef ROBOT1 
+#ifdef ROBOT1
 #define ZARIADENIE "/dev/ttyS0"
 #else
 #define ZARIADENIE "/dev/ttyUSB0"

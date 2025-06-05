@@ -50,13 +50,15 @@ int vidi_ciaru()
     for (int i=0; i<6; i++)
     {
         if (i>3) val=analogRead (i+2);
-        else val=analogRead (i);
+#ifdef ROBOT2        
+        else if (i == 3) val = 2000;  // fix June 5th: A3 is not working currently on ROBOT2 :(
+#endif
+	else val=analogRead (i);
      
         if (val<prah[i]){
-          //digitalWrite( ,HIGH);
-          return 1;
+          return 1; // !!!!!
+          //return 0;
         }
-        //digitalWrite(13,LOW);
     }
     return 0;
 }
@@ -85,7 +87,15 @@ void kalibracia()
   for (int i=0; i<6; i++)
   {
        //druha cast programu (vypocet prahovej hodnoty)
+       
+       // 2/3 of the range min...max 
        prah[i]=(2*max[i]+min[i])/3;    
+
+       // 1/3 of the range min...max 
+       //prah[i]=(max[i]+2 * min[i])/3;    
+       
+       // middle of the range min..max
+       //prah[i]=(max[i] * min[i])/2;    
   }
   // zapisat kalibraciu do EEPROM
   zapis_kalibraciu_do_EEPROM();
