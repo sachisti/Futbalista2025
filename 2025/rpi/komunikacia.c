@@ -38,7 +38,7 @@ int pripoj_arduino()
 {
     int serial_port = open(ZARIADENIE, O_RDWR);
     if (serial_port < 0) {
-      printf("Error %i from open: %s\n", errno, strerror(errno));
+      printf("Error %i from open (%s): %s\n", errno, ZARIADENIE, strerror(errno));
       return 0;
     } 
     printf("opened\n");
