@@ -40,8 +40,8 @@ void start_again()
 
 void spracuj_paket()
 {
-  Serial.print("!p:");
-  Serial.println((char *)(paket));
+  //Serial.print("!p:");
+  //Serial.println((char *)(paket));
   // na tomto mieste mame v poli paket[] prijaty 0-ukonceny retazec znakov
   int a;
   // v tejto ukazke retazec dekodujeme ako cislo a vypiseme spravu s dvojnasobkom
