@@ -1,6 +1,6 @@
 #include <inttypes.h>
 
-#define ROBOT2
+#define ROBOT1
 
 // vsetky prototypy funkcii
 
