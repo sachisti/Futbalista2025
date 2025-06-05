@@ -114,7 +114,7 @@ long long usec()
 
 int process_frames(int fd)
 {
-    int pocitadlo = 0;
+    //int pocitadlo = 0;
     struct v4l2_buffer buf = {0};
     buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     buf.memory = V4L2_MEMORY_MMAP;
@@ -126,7 +126,7 @@ int process_frames(int fd)
         return 1;
     }
  
-    long long tm = usec();
+    //long long tm = usec();
 
     while (system_runs)
     {
@@ -164,8 +164,8 @@ int process_frames(int fd)
  
 extern "C" void *camera_main(void *args)
 {
-	int width = sirka;
-	int height = vyska;
+	//int width = sirka;
+	//int height = vyska;
         int fd;
 	const char *device = "/dev/video0";
 	//if (argc > 1) device = argv[1];

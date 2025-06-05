@@ -138,7 +138,7 @@ int hra()
 	    {
               int uhol_smer = (180 - uhol_lopta) / 2 + 97;
 	      uint8_t paket_smer[10];
-	      sprintf(paket_smer, "%d", uhol_smer);
+	      sprintf((char *)paket_smer, "%d", uhol_smer);
 	      zapis_paket_do_arduina(paket_smer);
 	      iter++;
 	      if (iter % 100 == 0)

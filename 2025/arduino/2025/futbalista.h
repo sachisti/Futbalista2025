@@ -1,5 +1,7 @@
 #include <inttypes.h>
 
+#define ROBOT2
+
 // vsetky prototypy funkcii
 
 // pohyb
