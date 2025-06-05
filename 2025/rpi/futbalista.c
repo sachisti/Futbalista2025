@@ -74,6 +74,7 @@ void posli_nevidi_loptu()
 }
 
 char logstr[1000];
+static char *paket_kick = "55";
 
 int hra()
 {
@@ -87,10 +88,16 @@ int hra()
 
 
 	    int je_pred_nami_nasa_branka = 0;
-	    if ((opponent_color == BLUE) && (veci.velkost_zltej_branky > 50))
+	    if ((opponent_color == BLUE) && (veci.velkost_zltej_branky > 150))
 	        je_pred_nami_nasa_branka =1;
-	     if ((opponent_color == YELLOW) && (veci.velkost_modrej_branky > 50))
+	     if ((opponent_color == YELLOW) && (veci.velkost_modrej_branky > 150))
 	        je_pred_nami_nasa_branka =1;
+
+	    int je_pred_nami_jeho_branka = 0;
+	    if ((opponent_color == BLUE) && (veci.velkost_modrej_branky > 150))
+	        je_pred_nami_jeho_branka =1;
+	     if ((opponent_color == YELLOW) && (veci.velkost_zltej_branky > 150))
+	        je_pred_nami_jeho_branka =1;
 	   
 	   /*
 	     if (!veci.stlpec_lopty) posli_nevidi_loptu();
@@ -119,6 +126,8 @@ int hra()
 	    int bunka_riadok = veci.riadok_lopty / 72;
             int bunka_stlpec = veci.stlpec_lopty / 128;
             int uhol_lopta = uhol[bunka_riadok][bunka_stlpec];
+	    int vzdial_lopta = vzdial[bunka_riadok][bunka_stlpec];
+
 	    if (uhol_lopta == -1) 
 	    {
 		posli_nevidi_loptu();
@@ -134,12 +143,16 @@ int hra()
 		 //zaloguj_n("hra() iter", iter);
 	        }
 	    }
-	    else
+	    else  // normal case when ball is seen
 	    {
               int uhol_smer = (180 - uhol_lopta) / 2 + 97;
 	      uint8_t paket_smer[10];
 	      sprintf((char *)paket_smer, "%d", uhol_smer);
 	      zapis_paket_do_arduina(paket_smer);
+
+              if ((vzdial_lopta <= 5) && je_pred_nami_jeho_branka)
+	        zapis_paket_do_arduina(paket_kick);
+
 	      iter++;
 	      if (iter % 100 == 0)
 	      { 

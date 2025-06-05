@@ -5,7 +5,7 @@
 
 #define YELLOW 1
 #define BLUE 2
-#define ROBOT2
+#define ROBOT1
 
 extern int opponent_color;
 extern int sirka;
@@ -23,6 +23,7 @@ extern volatile hladane_veci veci;
 extern volatile int mam_veci;
 
 extern uint8_t uhol[10][10];
+extern uint8_t vzdial[10][10];
 
 // komunikacia 
 
