@@ -122,7 +122,7 @@ int je_vec (uint8_t r, uint8_t g, uint8_t b, int vec)
   
   if (vec == VEC_LOPTA)
   {    
-    if ((((h < 35) && (h > 0)) || (h > 353)) && (s > 0.37) && (v > 65)){      // s > 0.45
+    if ((((h < 20) && (h > 0)) || (h > 353)) && (s > 0.45) && (v > 55)){      // s > 0.45
       return 1;
     }
   }
@@ -134,7 +134,7 @@ int je_vec (uint8_t r, uint8_t g, uint8_t b, int vec)
   }
   else if (vec == VEC_ZLTA_BRANKA)
   {
-     if (((h > 45) && (h < 65)) && (s > 0.4) && (v > 120)){
+     if (((h > 55) && (h < 70)) && (s > 0.6) && (v > 120)){
       return 1;
       
     }
