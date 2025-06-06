@@ -1,8 +1,8 @@
 #include <Arduino.h>
-#include <EEPROM.h> 
+#include <EEPROM.h>
 #include "futbalista.h"
 
-#define STUCK_COUNT 500
+#define STUCK_COUNT 10000
 
 //A0 - zadne kolo pravy
 //A1 - prave kolo zadny
@@ -12,6 +12,7 @@
 //A7 - lave kolo zadny
 
 static int stuck = 0;
+volatile int is_stuck = 0;
 
 int val = 0;
 int min[6], max[6], prah[6];
@@ -64,6 +65,7 @@ int vidi_ciaru()
           if (stuck == STUCK_COUNT)
             // stuck on lines too long
             {
+              is_stuck = 1;
               Serial.println("!stuck");  
             }
           return 1; // !!!!!
@@ -71,6 +73,7 @@ int vidi_ciaru()
         }
     }
     if (stuck > 0) stuck--;
+    else is_stuck = 0;
     return 0;
 }
 
