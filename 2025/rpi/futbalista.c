@@ -60,6 +60,24 @@ void posli_lopta_vlavo()
 
 }
 
+void posli_vysoka_rychlost()
+{
+    char *s = "16";    
+    zapis_paket_do_arduina((uint8_t *)s);
+}
+
+void posli_normalna_rychlost()
+{
+    char *s = "17";    
+    zapis_paket_do_arduina((uint8_t *)s);
+}
+
+void posli_nizka_rychlost()
+{
+    char *s = "18";    
+    zapis_paket_do_arduina((uint8_t *)s);
+}
+
 void posli_lopta_vstrede()
 {
     char *s = "23";    
@@ -113,6 +131,7 @@ int hra()
 	if (!veci.stlpec_lopty) 
 	{
 	    posli_nevidi_loptu();
+	    posli_normalna_rychlost();
 	    iter++;
 	    if (iter % 100 == 0)
 	    { 
@@ -149,6 +168,13 @@ int hra()
 	      uint8_t paket_smer[10];
 	      sprintf((char *)paket_smer, "%d", uhol_smer);
 	      zapis_paket_do_arduina(paket_smer);
+
+
+	      if (je_pred_nami_nasa_branka) 
+		posli_nizka_rychlost();
+	      else if (je_pred_nami_jeho_branka) 
+		posli_vysoka_rychlost();
+
 
               if ((vzdial_lopta <= 5) && je_pred_nami_jeho_branka)
 	        zapis_paket_do_arduina(paket_kick);

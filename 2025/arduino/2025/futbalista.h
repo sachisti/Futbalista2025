@@ -1,6 +1,12 @@
 #include <inttypes.h>
 
-#define ROBOT2
+#define ROBOT1
+
+#define HIGH_SPEED 150
+#define NORMAL_SPEED 110
+#define LOW_SPEED 70
+
+extern uint8_t curr_speed;
 
 // vsetky prototypy funkcii
 

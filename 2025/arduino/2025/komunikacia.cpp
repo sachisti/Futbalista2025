@@ -58,6 +58,9 @@ void spracuj_paket()
   else if (a == 8) zastav();
   else if (a == 12) soft_kalibracia();
   else if (a == 15) test_kompas();
+  else if (a == 16) curr_speed = HIGH_SPEED;
+  else if (a == 17) curr_speed = NORMAL_SPEED;
+  else if (a == 18) curr_speed = LOW_SPEED;
   else if (a == 31) dolava_vzad();
   else if (a == 32) doprava_vzad();
   else if (a == 33) dozadu();
