@@ -117,31 +117,21 @@ int hra()
 	     if ((opponent_color == YELLOW) && (veci.velkost_zltej_branky > 150))
 	        je_pred_nami_jeho_branka =1;
 	   
-	   /*
-	     if (!veci.stlpec_lopty) posli_nevidi_loptu();
-         else if (veci.velkost_lopty < 10) continue;
-         else if (veci.stlpec_lopty < sirka / 3) posli_lopta_vpravo();
-	     else if (veci.stlpec_lopty < 2 * sirka / 3)
-	     {
-	        if (je_pred_nami_nasa_branka) posli_nevidi_loptu();
-	        else posli_lopta_vstrede();
-	     } else posli_lopta_vlavo();
-	*/
 	    int modra_bunka_riadok = veci.riadok_modrej_branky / 72;
             int modra_bunka_stlpec = veci.stlpec_modrej_branky / 128;
             int modra_branka_uhol = uhol[modra_bunka_riadok][modra_bunka_stlpec];
 	    int vzdial_modra_branka = vzdial[modra_bunka_riadok][modra_bunka_stlpec];
 
-	    if (modra_branka_uhol == -1) 
-		posli_nevidi_modru_branku(); //neviem presne co este
+	    if ((modra_branka_uhol == -1) && (opponent_color == BLUE))
+	        je_pred_nami_jeho_branka = 0;
 		
 		int zlta_bunka_riadok = veci.riadok_zltej_branky / 72;
             int zlta_bunka_stlpec = veci.stlpec_zltej_branky / 128;
             int zlta_branka_uhol = uhol[zlta_bunka_riadok][zlta_bunka_stlpec];
         int vzdial_zlta_branka = vzdial[zlta_bunka_riadok][zlta_bunka_stlpe>
 
-        if (zlta_branka_uhol == -1)
-        posli_nevidi_zltu_branku(); //neviem presne co este
+	    if ((modra_branka_uhol == -1) && (opponent_color == YELLOW))
+	        je_pred_nami_jeho_branka = 0;
 
 		
 
