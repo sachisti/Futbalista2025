@@ -123,19 +123,19 @@ int hra()
 	    int vzdial_modra_branka = vzdial[modra_bunka_riadok][modra_bunka_stlpec];
 
 	    if ((modra_branka_uhol == -1) && (opponent_color == BLUE))
-	        je_pred_nami_jeho_branka = 0;
-		
+	        {
+		 je_pred_nami_jeho_branka = 0;
+		}
 		int zlta_bunka_riadok = veci.riadok_zltej_branky / 72;
             int zlta_bunka_stlpec = veci.stlpec_zltej_branky / 128;
             int zlta_branka_uhol = uhol[zlta_bunka_riadok][zlta_bunka_stlpec];
-        int vzdial_zlta_branka = vzdial[zlta_bunka_riadok][zlta_bunka_stlpe>
+        int vzdial_zlta_branka = vzdial[zlta_bunka_riadok][zlta_bunka_stlpec];
 
 	    if ((modra_branka_uhol == -1) && (opponent_color == YELLOW))
-	        je_pred_nami_jeho_branka = 0;
+	       {
+		je_pred_nami_jeho_branka = 0;
+	       }
 
-		
-
-	
 	if (!veci.stlpec_lopty) 
 	{
 	    posli_nevidi_loptu();
