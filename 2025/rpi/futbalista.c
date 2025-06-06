@@ -127,6 +127,24 @@ int hra()
 	        else posli_lopta_vstrede();
 	     } else posli_lopta_vlavo();
 	*/
+	    int modra_bunka_riadok = veci.riadok_modrej_branky / 72;
+            int modra_bunka_stlpec = veci.stlpec_modrej_branky / 128;
+            int modra_branka_uhol = uhol[modra_bunka_riadok][modra_bunka_stlpec];
+	    int vzdial_modra_branka = vzdial[modra_bunka_riadok][modra_bunka_stlpec];
+
+	    if (modra_branka_uhol == -1) 
+		posli_nevidi_modru_branku(); //neviem presne co este
+		
+		int zlta_bunka_riadok = veci.riadok_zltej_branky / 72;
+            int zlta_bunka_stlpec = veci.stlpec_zltej_branky / 128;
+            int zlta_branka_uhol = uhol[zlta_bunka_riadok][zlta_bunka_stlpec];
+        int vzdial_zlta_branka = vzdial[zlta_bunka_riadok][zlta_bunka_stlpe>
+
+        if (zlta_branka_uhol == -1)
+        posli_nevidi_zltu_branku(); //neviem presne co este
+
+		
+
 	
 	if (!veci.stlpec_lopty) 
 	{

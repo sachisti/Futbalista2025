@@ -201,7 +201,7 @@ void najdi_veci_v_obraze(uint8_t *RGB)
       // prechadzame cely obrazok bod po bode...
       // na tomto mieste chcete program upravit podla svojich potrieb...
 
-      int preskoc_riadky = vyska * 3 / 10;
+      int preskoc_riadky = vyska * 3 / 20;
       // najskor vynulujeme vsetky 4 okraje, aby fill nevybehol mimo rozsah pola
       for (int i = 0; i < vyska; i++)
       {
