@@ -2,12 +2,16 @@
 #include <EEPROM.h> 
 #include "futbalista.h"
 
+#define STUCK_COUNT 500
+
 //A0 - zadne kolo pravy
 //A1 - prave kolo zadny
 //A2 - prave kolo predny
 //A3 - lave kolo predny
 //A6 - zadne kolo lavy
 //A7 - lave kolo zadny
+
+static int stuck = 0;
 
 int val = 0;
 int min[6], max[6], prah[6];
@@ -56,10 +60,17 @@ int vidi_ciaru()
 	else val=analogRead (i);
      
         if (val<prah[i]){
+          stuck++;
+          if (stuck == STUCK_COUNT)
+            // stuck on lines too long
+            {
+              Serial.println("!stuck");  
+            }
           return 1; // !!!!!
           //return 0;
         }
     }
+    if (stuck > 0) stuck--;
     return 0;
 }
 
