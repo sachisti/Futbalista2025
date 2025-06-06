@@ -440,6 +440,7 @@ void obrat_smer()
     case IDE_VZAD: dopredu(); delay(CAS_OBRAT_SMER); zastav(); break;
     case IDE_VLAVO: doprava_vzad(); delay(CAS_OBRAT_SMER); zastav(); break;
     case IDE_VPRAVO: dolava_vzad(); delay(CAS_OBRAT_SMER); zastav(); break;
+    case TOCI_SA: break;
     default: zastav(); break;    
   }
 }
@@ -491,6 +492,7 @@ void vypis_r123()
 }
 
 void segment_f(int where) {  // to the right (where=-90..-60)
+  kam_ide = IDE_VPRAVO;
   r1_adjusted = r1 = curr_speed;
   r3_adjusted = r3 = curr_speed*(-60-where)/60;
   r2_adjusted = r2 = curr_speed*(where+120)/60;
@@ -501,6 +503,8 @@ void segment_f(int where) {  // to the right (where=-90..-60)
 }
 
 void segment_a(int where) {   // to front right (where=-60..0)
+  
+ kam_ide = IDE_ROVNO;
   r2_adjusted = r2 = curr_speed;
   r3_adjusted = r3 = curr_speed*(where+60)/60;
   r1_adjusted = r1 = curr_speed*(-where)/60;
@@ -511,6 +515,7 @@ void segment_a(int where) {   // to front right (where=-60..0)
 }
 
 void segment_b(int where) {   // to front left (where=0..60)
+  kam_ide = IDE_ROVNO;
   r3_adjusted = r3 = curr_speed;
   r2_adjusted = r2 = curr_speed*(60-where)/60;
   r1_adjusted = r1 = curr_speed*where/60;
@@ -521,6 +526,7 @@ void segment_b(int where) {   // to front left (where=0..60)
 }
 
 void segment_c(int where) {   // to the left (where=60..90)
+  kam_ide = IDE_VLAVO;
   r1_adjusted = r1 = curr_speed;
   r2_adjusted = r2 = curr_speed*(where-60)/60;
   r3_adjusted = r3 = curr_speed*(120-where)/60;
