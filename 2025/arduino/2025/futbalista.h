@@ -1,6 +1,6 @@
 #include <inttypes.h>
 
-#define ROBOT2
+#define ROBOT1
 
 #define HIGH_SPEED 150
 #define NORMAL_SPEED 110
