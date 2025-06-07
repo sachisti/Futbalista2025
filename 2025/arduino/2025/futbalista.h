@@ -50,6 +50,7 @@ uint8_t config_on();
 uint8_t start_on();
 
 // senzory (pouzi analogRead(0)-analogRead(7) okrem 4,5
+extern volatile int is_stuck;
 
 void setup_senzory();
 void test_senzorov();

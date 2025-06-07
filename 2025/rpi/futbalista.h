@@ -30,6 +30,7 @@ extern uint8_t vzdial[10][10];
 void setup_komunikacia();
 void zapis_paket_do_arduina(uint8_t *zapisovany_paket); 
 void ukonci_komunikaciu();
+void posli_nevidi_loptu();
 
 // kamera
 
