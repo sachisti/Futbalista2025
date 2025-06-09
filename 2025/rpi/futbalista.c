@@ -170,6 +170,9 @@ int hra()
 		 //zaloguj_n("hra() iter", iter);
 	        }
 	    }
+	    else if veci.velkost_lopty = 10 {
+		    posli_nevidi_loptu();
+	    }
 	    else  // normal case when ball is seen
 	    {
               int uhol_smer = (180 - uhol_lopta) / 2 + 97;

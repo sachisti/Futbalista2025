@@ -306,11 +306,6 @@ void najdi_veci_v_obraze(uint8_t *RGB)
       veci.riadok_modrej_branky = doteraz_najv_riadok[VEC_MODRA_BRANKA];
       veci.stlpec_modrej_branky = doteraz_najv_stlpec[VEC_MODRA_BRANKA];
       
-      if (veci.velkost_lopty >= 10)
-      {
-       posli_nevidi_loptu();
-      }
-      
       if (veci.riadok_lopty > 0)
       {
         for (int i = -1; i < 2; i++)
